@@ -1,0 +1,11 @@
+{
+    "name": "Beranda",
+    "alias": "beranda",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Beranda\\Providers\\BerandaServiceProvider"
+    ],
+    "files": []
+}
