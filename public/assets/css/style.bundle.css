@@ -57272,11 +57272,11 @@ body {
 
 .aside .aside-menu .menu .menu-item .menu-link {
     background-color: transparent;
-    color: var(--kt-gray-700)
+    color: var(--kt-gray-800)
 }
 
 .aside .aside-menu .menu .menu-item .menu-link .menu-title {
-    color: var(--kt-gray-700)
+    color: var(--kt-gray-800)
 }
 
 .aside .aside-menu .menu .menu-item .menu-link .menu-icon,
@@ -57310,62 +57310,62 @@ body {
 .aside .aside-menu .menu .menu-item:not(.here) .menu-link:hover:not(.disabled):not(.active):not(.here) {
     transition: color .2s ease;
     background-color: transparent;
-    color: var(--kt-gray-700)
+    color: var(--kt-gray-800)
 }
 
 .aside .aside-menu .menu .menu-item.hover:not(.here)>.menu-link:not(.disabled):not(.active):not(.here) .menu-title,
 .aside .aside-menu .menu .menu-item:not(.here) .menu-link:hover:not(.disabled):not(.active):not(.here) .menu-title {
-    color: var(--kt-gray-700)
+    color: var(--kt-gray-800)
 }
 
 .aside .aside-menu .menu .menu-item.here>.menu-link {
     transition: color .2s ease;
     background-color: transparent;
-    color: var(--kt-gray-700)
+    color: var(--kt-gray-800)
 }
 
 .aside .aside-menu .menu .menu-item.here>.menu-link .menu-title {
-    color: var(--kt-gray-700)
+    color: var(--kt-gray-800)
 }
 
 .aside .aside-menu .menu .menu-item.show>.menu-link {
     transition: color .2s ease;
     background-color: transparent;
-    color: var(--kt-gray-700)
+    color: var(--kt-gray-800)
 }
 
 .aside .aside-menu .menu .menu-item.show>.menu-link .menu-title {
-    color: var(--kt-gray-700)
+    color: var(--kt-gray-800)
 }
 
 .aside .aside-menu .menu .menu-item.show>.menu-link .menu-icon,
 .aside .aside-menu .menu .menu-item.show>.menu-link .menu-icon .svg-icon,
 .aside .aside-menu .menu .menu-item.show>.menu-link .menu-icon i {
-    color: var(--kt-gray-700)
+    color: var(--kt-gray-800)
 }
 
 .aside .aside-menu .menu .menu-item.show>.menu-link .menu-bullet .bullet {
-    background-color: var(--kt-gray-700)
+    background-color: var(--kt-gray-800)
 }
 
 .aside .aside-menu .menu .menu-item .menu-link.active {
     transition: color .2s ease;
     background-color: transparent;
-    color: var(--kt-gray-700)
+    color: var(--kt-gray-800)
 }
 
 .aside .aside-menu .menu .menu-item .menu-link.active .menu-title {
-    color: var(--kt-gray-700)
+    color: var(--kt-gray-800)
 }
 
 .aside .aside-menu .menu .menu-item .menu-link.active .menu-icon,
 .aside .aside-menu .menu .menu-item .menu-link.active .menu-icon .svg-icon,
 .aside .aside-menu .menu .menu-item .menu-link.active .menu-icon i {
-    color: var(--kt-gray-700)
+    color: var(--kt-gray-800)
 }
 
 .aside .aside-menu .menu .menu-item .menu-link.active .menu-bullet .bullet {
-    background-color: var(--kt-gray-700)
+    background-color: var(--kt-gray-800)
 }
 
 .aside .aside-menu .menu .menu-item.here>.menu-link .menu-title,
