@@ -11,6 +11,11 @@
 |
 */
 
+use Illuminate\Support\Facades\Route;
+
 Route::prefix('auth')->group(function() {
     Route::get('/', 'AuthController@index');
+    Route::get('/tes', 'AuthController@tes');
+    Route::get('/cek', 'AuthController@cek');
+    Route::get('/logout', 'AuthController@logout');
 });
