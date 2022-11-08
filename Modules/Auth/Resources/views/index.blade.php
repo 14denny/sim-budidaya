@@ -14,26 +14,25 @@ License: For each use you must have a valid license purchased only from above li
 <!--begin::Head-->
 
 <head>
-    <base href="../../../" />
-    <title>Metronic - the world's #1 selling Bootstrap Admin Theme Ecosystem for HTML, Vue, React, Angular & Laravel by
-        Keenthemes</title>
+    <base href="" />
+    <title>SIM BUDIDAYA - Sign In</title>
     <meta charset="utf-8" />
-    <meta name="description"
-        content="The most advanced Bootstrap Admin Theme on Themeforest trusted by 100,000 beginners and professionals. Multi-demo, Dark Mode, RTL support and complete React, Angular, Vue, Asp.Net Core, Rails, Spring, Blazor, Django, Flask & Laravel versions. Grab your copy now and get life-time updates for free." />
-    <meta name="keywords"
-        content="metronic, bootstrap, bootstrap 5, angular, VueJs, React, Asp.Net Core, Rails, Spring, Blazor, Django, Flask & Laravel starter kits, admin themes, web design, figma, web development, free templates, free admin themes, bootstrap theme, bootstrap template, bootstrap dashboard, bootstrap dak mode, bootstrap button, bootstrap datepicker, bootstrap timepicker, fullcalendar, datatables, flaticon" />
+    <meta name="description" content="Sistem Informasi Budidaya Bawang Merah" />
+    <meta name="keywords" content="budidaya, bawang merah" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:type" content="article" />
-    <meta property="og:title"
-        content="Metronic | Bootstrap HTML, VueJS, React, Angular, Asp.Net Core, Rails, Spring, Blazor, Django, Flask & Laravel Admin Dashboard Theme" />
-    <meta property="og:url" content="https://keenthemes.com/metronic" />
+    <meta property="og:title" content="SIM BUDIDAYA" />
+    {{-- <meta property="og:url" content="https://keenthemes.com/metronic" />
     <meta property="og:site_name" content="Keenthemes | Metronic" />
-    <link rel="canonical" href="https://preview.keenthemes.com/metronic8" />
-    <link rel="shortcut icon" href="assets/media/logos/favicon.ico" />
+    <link rel="canonical" href="https://preview.keenthemes.com/metronic8" /> --}}
+    <link rel="shortcut icon" href="assets/media/logos/logo-unsyiah-sm.png" />
     <!--begin::Fonts(mandatory for all pages)-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
     <!--end::Fonts-->
+    <!--begin::Vendor Stylesheets(used for this page only)-->
+    <link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
+    <!--end::Vendor Stylesheets-->
     <!--begin::Global Stylesheets Bundle(mandatory for all pages)-->
     <link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
     <link href="assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
@@ -86,21 +85,18 @@ License: For each use you must have a valid license purchased only from above li
                 <div class="d-flex flex-column flex-center pb-0 pb-lg-10 p-10 w-100">
                     <!--begin::Image-->
                     <img class="theme-light-show mx-auto mw-100 w-150px w-lg-300px mb-10 mb-lg-20"
-                        src="assets/media/auth/agency.png" alt="" />
+                        src="{{ url('assets/media/auth/agency.png') }}" alt="" />
                     <img class="theme-dark-show mx-auto mw-100 w-150px w-lg-300px mb-10 mb-lg-20"
-                        src="assets/media/auth/agency-dark.png" alt="" />
+                        src="{{ url('assets/media/auth/agency-dark.png') }}" alt="" />
                     <!--end::Image-->
                     <!--begin::Title-->
-                    <h1 class="text-gray-800 fs-2qx fw-bold text-center mb-7">Fast, Efficient and Productive</h1>
+                    <h1 class="text-gray-800 fs-2qx fw-bold text-center mb-7">Sistem Informasi Budidaya Bawang Merah
+                    </h1>
                     <!--end::Title-->
                     <!--begin::Text-->
-                    <div class="text-gray-600 fs-base text-center fw-semibold">In this kind of post,
-                        <a href="#" class="opacity-75-hover text-primary me-1">the blogger</a>introduces a person
-                        they've interviewed
-                        <br />and provides some background information about
-                        <a href="#" class="opacity-75-hover text-primary me-1">the interviewee</a>and their
-                        <br />work following this is a transcript of the interview.
-                    </div>
+                    {{-- <div class="text-gray-600 fs-base text-center fw-semibold">Sistem Manajemen dan Informasi budidaya
+                        bawang merah peserta MBKM
+                    </div> --}}
                     <!--end::Text-->
                 </div>
                 <!--end::Content-->
@@ -114,6 +110,7 @@ License: For each use you must have a valid license purchased only from above li
                     <div class="w-md-400px">
                         <!--begin::Form-->
                         <form class="form w-100" novalidate="novalidate" id="form-login">
+                            @csrf
                             <!--begin::Heading-->
                             <div class="text-center mb-11">
                                 <!--begin::Title-->
@@ -131,7 +128,7 @@ License: For each use you must have a valid license purchased only from above li
                                     <!--begin::Google link=-->
                                     <a href="#"
                                         class="btn btn-flex btn-outline btn-text-gray-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100">
-                                        <img alt="Logo" src="assets/media/logos/logo-unsyiah-sm.png"
+                                        <img alt="Logo" src="{{ url('assets/media/logos/logo-unsyiah-sm.png') }}"
                                             class="h-15px me-3" />SSO USK</a>
                                     <!--end::Google link=-->
                                 </div>
@@ -146,14 +143,14 @@ License: For each use you must have a valid license purchased only from above li
                             <!--begin::Input group=-->
                             <div class="fv-row mb-8">
                                 <!--begin::Email-->
-                                <input type="text" placeholder="Username" name="username" autocomplete="off"
+                                <input type="text" placeholder="Username" id="username" name="username" autocomplete="off"
                                     class="form-control bg-transparent" />
                                 <!--end::Email-->
                             </div>
                             <!--end::Input group=-->
                             <div class="fv-row mb-3">
                                 <!--begin::Password-->
-                                <input type="password" placeholder="Password" name="password" autocomplete="off"
+                                <input type="password" placeholder="Password" id="password" name="password" autocomplete="off"
                                     class="form-control bg-transparent" />
                                 <!--end::Password-->
                             </div>
@@ -162,14 +159,13 @@ License: For each use you must have a valid license purchased only from above li
                             <div class="d-flex flex-stack flex-wrap gap-3 fs-base fw-semibold mb-8">
                                 <div></div>
                                 <!--begin::Link-->
-                                <a href="#"
-                                    class="link-primary">Lupa password ?</a>
+                                <a href="#" class="link-primary">Lupa password ?</a>
                                 <!--end::Link-->
                             </div>
                             <!--end::Wrapper-->
                             <!--begin::Submit button-->
                             <div class="d-grid mb-10">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" id="btn-submit" class="btn btn-primary">
                                     <!--begin::Indicator label-->
                                     <span class="indicator-label">Sign In</span>
                                     <!--end::Indicator label-->
@@ -198,9 +194,43 @@ License: For each use you must have a valid license purchased only from above li
         var hostUrl = "assets/";
     </script>
     <!--begin::Global Javascript Bundle(mandatory for all pages)-->
-    <script src="assets/plugins/global/plugins.bundle.js"></script>
-    <script src="assets/js/scripts.bundle.js"></script>
+    <script src="{{ url('assets/plugins/global/plugins.bundle.js') }}"></script>
+    <script src="{{ url('assets/js/scripts.bundle.js') }}"></script>
+    <script src="{{ url('assets/js/swal.js') }}"></script>
     <!--end::Global Javascript Bundle-->
+    <script>
+        var csrf_token = $("input[name=_token]").val()
+        $("#form-login").submit((e) => {
+            e.preventDefault()
+
+            const username = $("#username").val()
+            const password = $("#password").val()
+
+            if (!username || !password) {
+                showSwal('info', "Harap isi username dan password dengan benar")
+                return;
+            }
+
+            $.ajax({
+                url: '{{route("auth.login")}}',
+                dataType:'json',
+                type:'post',
+                data:$("#form-login").serialize(),
+                success:(result)=>{
+                    csrf_token = result.csrf_token
+                    $("input[name=_token]").val(csrf_token)
+
+                    if(result.status){
+                        location.reload()
+                    }else{
+                        showSwal('error', result.msg)
+                    }
+                }
+            }).fail(()=>{
+                swalFailed()
+            })
+        })
+    </script>
     <!--end::Javascript-->
 </body>
 <!--end::Body-->

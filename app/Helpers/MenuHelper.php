@@ -11,8 +11,7 @@ class MenuHelper
     {
     }
 
-    public static function getListMenu(){
-        $roleid = session('roleid');
+    public static function getListMenu($roleid){
 
         if(!$roleid){
             return [];

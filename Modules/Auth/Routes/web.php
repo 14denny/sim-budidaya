@@ -13,9 +13,10 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('auth')->group(function() {
-    Route::get('/', 'AuthController@index');
-    Route::get('/tes', 'AuthController@tes');
+Route::prefix('/')->name('auth.')->group(function () {
+    Route::get('/', 'AuthController@index')->name('form');
+    Route::post('/', 'AuthController@doLogin')->name('login');
+    // Route::get('/tes', 'AuthController@tes');
     Route::get('/cek', 'AuthController@cek');
-    Route::get('/logout', 'AuthController@logout');
+    Route::get('/logout', 'AuthController@logout')->name('logout');
 });

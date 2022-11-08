@@ -11,6 +11,8 @@
 |
 */
 
-Route::prefix('beranda')->group(function() {
-    Route::get('/', 'BerandaController@index');
+use Illuminate\Support\Facades\Route;
+
+Route::prefix('beranda')->name('beranda.')->group(function() {
+    Route::get('/', 'BerandaController@index')->name('index');
 });

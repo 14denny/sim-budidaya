@@ -77,7 +77,7 @@ License: For each use you must have a valid license purchased only from above li
                 <!--begin::Brand-->
                 <div class="aside-logo py-8" id="kt_aside_logo">
                     <!--begin::Logo-->
-                    <a href="../../demo6/dist/index.html" class="d-flex align-items-center">
+                    <a href="{{ route('beranda.index') }}" class="d-flex align-items-center">
                         <img alt="Logo" src="{{ url('assets/media/logos/logo-unsyiah-sm.png') }}"
                             class="h-45px logo" />
                     </a>
@@ -99,8 +99,10 @@ License: For each use you must have a valid license purchased only from above li
                             @endphp
                             @foreach ($parents as $p)
                                 <!--begin:Menu item-->
-                                <div {{!$p['url'] ? 'data-kt-menu-trigger="{default: \'click\', lg: \'hover\'}"
-                                data-kt-menu-placement="right-start"' : ''}} class="menu-item py-2">
+                                <div {!! !$p['url']
+                                    ? 'data-kt-menu-trigger="{default: \'click\', lg: \'hover\'}"
+                                                                                                data-kt-menu-placement="right-start"'
+                                    : '' !!} class="menu-item py-2">
                                     <!--begin:Menu link-->
                                     <span class="menu-link menu-center">
                                         <span class="menu-icon me-0">
@@ -186,7 +188,7 @@ License: For each use you must have a valid license purchased only from above li
                         <!--end::Aside mobile toggle-->
                         <!--begin::Mobile logo-->
                         <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
-                            <a href="../../demo6/dist/index.html" class="d-lg-none">
+                            <a href="{{ route('beranda.index') }}" class="d-lg-none">
                                 <img alt="Logo" src="{{ url('assets/media/logos/logo-unsyiah-sm.png') }}"
                                     class="h-30px" />
                             </a>
@@ -564,8 +566,7 @@ License: For each use you must have a valid license purchased only from above li
                                         <!--end::Menu item-->
                                         <!--begin::Menu item-->
                                         <div class="menu-item px-5">
-                                            <a href="../../demo6/dist/authentication/layouts/corporate/sign-in.html"
-                                                class="menu-link px-5">Sign Out</a>
+                                            <a href="{{ route('auth.logout') }}" class="menu-link px-5">Sign Out</a>
                                         </div>
                                         <!--end::Menu item-->
                                     </div>
@@ -698,6 +699,7 @@ License: For each use you must have a valid license purchased only from above li
     <!--begin::Global Javascript Bundle(mandatory for all pages)-->
     <script src="{{ url('assets/plugins/global/plugins.bundle.js') }}"></script>
     <script src="{{ url('assets/js/scripts.bundle.js') }}"></script>
+    <script src="{{ url('assets/js/swal.js') }}"></script>
     <!--end::Global Javascript Bundle-->
     <!--end::Javascript-->
 </body>
