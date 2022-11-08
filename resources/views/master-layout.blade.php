@@ -38,7 +38,7 @@ License: For each use you must have a valid license purchased only from above li
     <link href="{{ url('assets/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
     <!--end::Global Stylesheets Bundle-->
     <style>
-        .fit-td{
+        .fit-td {
             width: 1%;
             white-space: nowrap;
         }
@@ -104,25 +104,27 @@ License: For each use you must have a valid license purchased only from above li
                                 $subs = session('menus') ? session('menus')['sub'] : [];
                             @endphp
                             @foreach ($parents as $p)
-                                
+                                @php
+                                    $parentActive = MenuHelper::parentActive($p['parent_path']);
+                                @endphp
                                 <!--begin:Menu item-->
                                 <div {!! !$p['url']
                                     ? 'data-kt-menu-trigger="{default: \'click\', lg: \'hover\'}"
-                                                                                                                                                                data-kt-menu-placement="right-start"'
-                                    : '' !!} class="menu-item py-2">
+                                                                                                                                                                                                                                                                data-kt-menu-placement="right-start"'
+                                    : '' !!} class="menu-item {{ $parentActive ? 'here' : '' }} py-2">
                                     <!--begin:Menu link-->
-                                    <span class="menu-link menu-center">
+                                    <a class="menu-link menu-center" href="{{ $p['url'] ?: '#' }}">
                                         <span class="menu-icon me-0">
                                             {!! $p['icon'] !!}
                                         </span>
-                                        @if ($p['url'])
+                                        {{-- @if ($p['url'])
                                             <a class="menu-title" href="{{ url($p['url']) }}">
                                                 {{ $p['name'] }}
                                             </a>
-                                        @else
-                                            <span class="menu-title">{{ $p['name'] }}</span>
-                                        @endif
-                                    </span>
+                                        @else --}}
+                                        <span class="menu-title">{{ $p['name'] }}</span>
+                                        {{-- @endif --}}
+                                    </a>
                                     <!--end:Menu link-->
                                     <!--begin:Menu sub-->
                                     <div class="menu-sub menu-sub-dropdown py-4 w-200px w-lg-225px">
@@ -140,10 +142,14 @@ License: For each use you must have a valid license purchased only from above li
                                         @endif
                                         @if (isset($subs[$p['name']]))
                                             @foreach ($subs[$p['name']] as $s)
+                                                @php
+                                                    $submenuActive = MenuHelper::submenuActive($s['url']);
+                                                @endphp
                                                 <!--begin:Menu item-->
                                                 <div class="menu-item">
                                                     <!--begin:Menu link-->
-                                                    <a class="menu-link" href="{{ url($s['url']) }}">
+                                                    <a class="menu-link {{ $submenuActive ? 'active' : '' }}"
+                                                        href="{{ url($s['url']) }}">
                                                         <span class="menu-bullet">
                                                             <span class="bullet bullet-dot"></span>
                                                         </span>

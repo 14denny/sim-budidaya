@@ -58,7 +58,8 @@ class AuthController extends Controller
                     array_push($parent_menu, array(
                         'icon' => $menu->menu_icon,
                         'name' => $menu->nama,
-                        'url' => $menu->url
+                        'url' => $menu->url,
+                        'parent_path'=> $menu->url
                     ));
                 } else {
                     if ($current_parent != $menu->parent) {
@@ -67,6 +68,7 @@ class AuthController extends Controller
                             'icon' => $menu->icon_parent,
                             'name' => $menu->parent,
                             'url' => null,
+                            'parent_path' => $menu->parent_path
                         ));
                     }
 
