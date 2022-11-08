@@ -13,7 +13,7 @@ KTUtil.onDOMContentLoaded((function () {
             target: [0, 1, 4]
         }],
         createdRow: function (row, data, dataIndex, cells) {
-            $(row).addClass(data[1]);
+            $(row).addClass(data[1] +" align-middle");
         }
     })
 }));
