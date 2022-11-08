@@ -36,6 +36,7 @@ License: For each use you must have a valid license purchased only from above li
     <!--begin::Global Stylesheets Bundle(mandatory for all pages)-->
     <link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
     <link href="assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css"/>
     <!--end::Global Stylesheets Bundle-->
 </head>
 <!--end::Head-->
@@ -101,7 +102,7 @@ License: For each use you must have a valid license purchased only from above li
                                 <!--begin:Menu item-->
                                 <div {!! !$p['url']
                                     ? 'data-kt-menu-trigger="{default: \'click\', lg: \'hover\'}"
-                                                                                                data-kt-menu-placement="right-start"'
+                                                                                                                                data-kt-menu-placement="right-start"'
                                     : '' !!} class="menu-item py-2">
                                     <!--begin:Menu link-->
                                     <span class="menu-link menu-center">
@@ -699,9 +700,18 @@ License: For each use you must have a valid license purchased only from above li
     <!--begin::Global Javascript Bundle(mandatory for all pages)-->
     <script src="{{ url('assets/plugins/global/plugins.bundle.js') }}"></script>
     <script src="{{ url('assets/js/scripts.bundle.js') }}"></script>
+    <script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <script src="{{ url('assets/js/custom-datatable.js') }}"></script>
     <script src="{{ url('assets/js/swal.js') }}"></script>
     <!--end::Global Javascript Bundle-->
     <!--end::Javascript-->
+
+    <script>
+        var csrf_token = "{{csrf_token()}}"
+    </script>
+    @hasSection('js')
+        @yield('js')
+    @endif
 </body>
 <!--end::Body-->
 
