@@ -26,18 +26,23 @@ License: For each use you must have a valid license purchased only from above li
     {{-- <meta property="og:url" content="https://keenthemes.com/metronic" />
     <meta property="og:site_name" content="Keenthemes | Metronic" />
     <link rel="canonical" href="https://preview.keenthemes.com/metronic8" /> --}}
-    <link rel="shortcut icon" href="assets/media/logos/logo-unsyiah-sm.png" />
+    <link rel="shortcut icon" href="{{ url('assets/media/logos/logo-unsyiah-sm.png') }}" />
     <!--begin::Fonts(mandatory for all pages)-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
     <!--end::Fonts-->
     <!--begin::Vendor Stylesheets(used for this page only)-->
-    <link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="{{ url('assets/plugins/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
     <!--end::Vendor Stylesheets-->
     <!--begin::Global Stylesheets Bundle(mandatory for all pages)-->
-    <link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
-    <link href="assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
-    <link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css"/>
+    <link href="{{ url('assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ url('assets/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
     <!--end::Global Stylesheets Bundle-->
+    <style>
+        .fit-td{
+            width: 1%;
+            white-space: nowrap;
+        }
+    </style>
 </head>
 <!--end::Head-->
 <!--begin::Body-->
@@ -99,10 +104,11 @@ License: For each use you must have a valid license purchased only from above li
                                 $subs = session('menus') ? session('menus')['sub'] : [];
                             @endphp
                             @foreach ($parents as $p)
+                                
                                 <!--begin:Menu item-->
                                 <div {!! !$p['url']
                                     ? 'data-kt-menu-trigger="{default: \'click\', lg: \'hover\'}"
-                                                                                                                                data-kt-menu-placement="right-start"'
+                                                                                                                                                                data-kt-menu-placement="right-start"'
                                     : '' !!} class="menu-item py-2">
                                     <!--begin:Menu link-->
                                     <span class="menu-link menu-center">
@@ -695,19 +701,19 @@ License: For each use you must have a valid license purchased only from above li
     <!--end::Modals-->
     <!--begin::Javascript-->
     <script>
-        var hostUrl = "assets/";
+        var hostUrl = "{{ url('assets/') }}";
     </script>
     <!--begin::Global Javascript Bundle(mandatory for all pages)-->
     <script src="{{ url('assets/plugins/global/plugins.bundle.js') }}"></script>
     <script src="{{ url('assets/js/scripts.bundle.js') }}"></script>
-    <script src="assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <script src="{{ url('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
     <script src="{{ url('assets/js/custom-datatable.js') }}"></script>
     <script src="{{ url('assets/js/swal.js') }}"></script>
     <!--end::Global Javascript Bundle-->
     <!--end::Javascript-->
 
     <script>
-        var csrf_token = "{{csrf_token()}}"
+        var csrf_token = "{{ csrf_token() }}"
     </script>
     @hasSection('js')
         @yield('js')

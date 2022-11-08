@@ -1,5 +1,6 @@
 {
     "Auth": true,
     "Beranda": true,
-    "Users": true
+    "Users": true,
+    "Manajemen": true
 }

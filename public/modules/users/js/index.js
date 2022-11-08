@@ -50,6 +50,9 @@ $("#form-add-user").submit((e) => {
                             result.newUser.rolename,
                             `<button onclick="deleteUser(this)" data-username="${result.newUser.username}" class="btn btn-sm btn-icon btn-danger">
                                 <i class="fa fa-ban"></i>
+                            </button>
+                            <button onclick="resetPassword(this)" data-username="${result.newUser.username}" class="btn btn-sm btn-icon btn-warning">
+                                <i class="fa fa-rotate"></i>
                             </button>`
                         ])
                     }
