@@ -5,42 +5,64 @@
 @endsection
 
 @section('subtitle')
-    Lokasi Budidaya
+    Penetapan Lokasi Peserta
 @endsection
 
 @section('body')
     <div class="row">
+
         <div class="col-md-3">
             <div class="shadow-sm card card-flush mb-0" data-kt-sticky="true" data-kt-sticky-name="docs-sticky-summary"
                 data-kt-sticky-offset="{default: false, xl: '200px'}" data-kt-sticky-width="{lg: '250px', xl: '300px'}"
                 data-kt-sticky-left="auto" data-kt-sticky-top="100px" data-kt-sticky-animation="false"
                 data-kt-sticky-zindex="95">
                 <div class="card-header bg-success">
-                    <h4 class="card-title">Tambah Lokasi</h4>
+                    <h4 class="card-title">Tambah Peserta</h4>
                 </div>
                 <div class="card-body">
-                    <form id="form-add-lokasi">
-                        @csrf
-                        <div class="form-group mb-4">
-                            <label class="form-label">Nama Lokasi</label>
-                            <input type="text" name="nama_lokasi" id="nama_lokasi" placeholder="Nama Lokasi"
-                                class="form-control form-control-solid">
+                    <div class="form-group mb-4">
+                        <label class="form-label">NPM</label>
+                        <input type="text" name="npm" id="npm" placeholder="NPM Peserta"
+                            class="form-control form-control-solid">
+                        <p class="text-end">
+                            <button onclick="cariMhs()" type="button" class="btn btn-sm btn-primary">Cari</button>
+                        </p>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label class="form-label">Data Mahasiswa</label>
+                        <div id="detil-mhs">
+                            <table class="table table-border table-rounded table-row-bordered table-striped">
+                                <tr>
+                                    <td class="fit-td pe-10">NPM</td>
+                                    <td>:</td>
+                                    <td id="npm-pencarian"></td>
+                                </tr>
+                                <tr>
+                                    <td class="fit-td pe-10">Nama</td>
+                                    <td>:</td>
+                                    <td id="nama-pencarian"></td>
+                                </tr>
+                                <tr>
+                                    <td class="fit-td pe-10">Jenis Kelamin</td>
+                                    <td>:</td>
+                                    <td id="jk-pencarian"></td>
+                                </tr>
+                                <tr>
+                                    <td class="fit-td pe-10">Fakultas</td>
+                                    <td>:</td>
+                                    <td id="fakultas-pencarian"></td>
+                                </tr>
+                                <tr>
+                                    <td class="fit-td pe-10">Prodi</td>
+                                    <td>:</td>
+                                    <td id="prodi-pencarian"></td>
+                                </tr>
+                            </table>
                         </div>
-                        <div class="form-group mb-4">
-                            <label class="form-label">Alamat</label>
-                            <input type="text" name="propinsi" id="propinsi" placeholder="Propinsi"
-                                class="form-control form-control-solid mb-4">
-                            <input type="text" name="kabkota" id="kabkota" placeholder="Kabupaten/kota"
-                                class="form-control form-control-solid mb-4">
-                            <input type="text" name="kecamatan" id="kecamatan" placeholder="Kecamatan"
-                                class="form-control form-control-solid mb-4">
-                            <input type="text" name="desa" id="desa" placeholder="Desa"
-                                class="form-control form-control-solid mb-4">
-                        </div>
-                        <div class="form-group mt-4 text-end">
-                            <button type="submit" class="btn btn-success">Tambah Lokasi</button>
-                        </div>
-                    </form>
+                    </div>
+                    <div class="form-group mt-4 text-end">
+                        <button type="button" onclick="tambahMhs()" class="btn btn-success">Tambah</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -49,7 +71,7 @@
                 <div class="card-header border-0 py-5">
                     <div class="col-12">
                         <h3 class="card-title align-items-start flex-column">
-                            <span class="card-label fw-bold fs-3 mb-1">Daftar Lokasi Budidaya</span>
+                            <span class="card-label fw-bold fs-3 mb-1">Daftar Peserta Lokasi Budidaya</span>
                         </h3>
                     </div>
                     <div class="col-12">
@@ -135,32 +157,31 @@
                 </div>
                 <div class="card-body py-0">
 
-                    <table id="table-lokasi" class="table table-responsive border table-rounded table-row-bordered gx-5">
+                    <table id="table-peserta" class="table table-responsive border table-rounded table-row-bordered gx-5">
                         <thead>
                             <tr>
                                 <th class="text-center fit-td px-7">No</th>
-                                <th class="text-center">ID Lokasi</th>
-                                <th class="text-center">Nama Lokasi</th>
-                                <th class="text-center">Alamat</th>
+                                <th class="text-center">NPM</th>
+                                <th class="text-center">Nama Peserta</th>
+                                <th class="text-center">Jenis Kelamin</th>
+                                <th class="text-center">Prodi</th>
+                                <th class="text-center">Fakultas</th>
                                 <th class="text-center fit-td px-15">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($lokasi as $item)
+                            @foreach ($peserta as $item)
                                 <tr class="align-middle">
                                     <td>{{ $loop->index + 1 }}</td>
-                                    <td>{{ $item->id }}</td>
-                                    <td>{{ $item->nama_lokasi }}</td>
-                                    <td>{{ "$item->propinsi, $item->kabkota, $item->kecamatan, $item->desa" }}</td>
+                                    <td>{{ $item->npm }}</td>
+                                    <td>{{ $item->nama }}</td>
+                                    <td>{{ $item->jenis_kelamin }}</td>
+                                    <td>{{ $item->prodi }}</td>
+                                    <td>{{ $item->fakultas }}</td>
                                     <td>
-                                        <button class="btn btn-sm btn-danger btn-icon" onclick="deleteLokasi(this)"
-                                            data-id="{{ $item->id }}" data-nama="{{ $item->nama_lokasi }}"><i
-                                                class="fa fa-trash"></i>
-                                        </button>
-                                        <button onclick="editLokasi(this)" data-id="{{ $item->id }}"
-                                            data-nama="{{ $item->nama_lokasi }}"
-                                            class="btn btn-sm btn-icon btn-light-primary">
-                                            <i class="fa fa-edit"></i>
+                                        <button 
+                                            onclick="deletePeserta(this)" data-npm="{{ $item->npm }}" data-nama="{{ $item->nama }}"  class="btn btn-sm btn-icon btn-danger">
+                                            <i class="fa fa-trash"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -171,58 +192,16 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" tabindex="-1" id="modal-edit-lokasi">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title">Edit Lokasi</h3>
-
-                    <!--begin::Close-->
-                    <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal"
-                        aria-label="Close">
-                        <span class="svg-icon svg-icon-1"></span>
-                    </div>
-                    <!--end::Close-->
-                </div>
-
-                <form id="form-edit-lokasi">
-                    <input type="hidden" name="id_lokasi_edit" id="id_lokasi_edit">
-                    <div class="modal-body">
-                        @csrf
-                        <div class="form-group mb-4">
-                            <label class="form-label">Nama Lokasi</label>
-                            <input type="text" name="nama_lokasi" id="nama_lokasi_edit" placeholder="Nama Lokasi"
-                                class="form-control form-control-solid">
-                        </div>
-                        <div class="form-group mb-4">
-                            <label class="form-label">Alamat</label>
-                            <input type="text" name="propinsi" id="propinsi_edit" placeholder="Propinsi"
-                                class="form-control form-control-solid mb-4">
-                            <input type="text" name="kabkota" id="kabkota_edit" placeholder="Kabupaten/kota"
-                                class="form-control form-control-solid mb-4">
-                            <input type="text" name="kecamatan" id="kecamatan_edit" placeholder="Kecamatan"
-                                class="form-control form-control-solid mb-4">
-                            <input type="text" name="desa" id="desa_edit" placeholder="Desa"
-                                class="form-control form-control-solid mb-4">
-                        </div>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-success">Simpan Perubahan</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @section('js')
     <script>
-        const urlAddLokasi = "{{ route('lokasi.insert') }}"
-        const urlGetOneLokasi = "{{ route('lokasi.getOne') }}"
-        const urlDeleteLokasi = "{{ route('lokasi.delete') }}"
+        const urlAddPeserta = "{{ route('asign_lokasi.insert') }}"
+        const urlDeletePeserta = "{{ route('asign_lokasi.delete') }}"
         const urlEditLokasi = "{{ route('lokasi.edit') }}"
+        const namaLokasi = "{{ $lokasi->nama_lokasi }}"
+        const idLokasi = "{{ $lokasi->id }}"
+        const urlCariMhs = "{{ route('asign_lokasi.cariMhs') }}"
     </script>
-    <script src="{{ url('modules/manajemen/js/lokasi.js') }}"></script>
+    <script src="{{ url('modules/manajemen/js/peserta-lokasi.js') }}"></script>
 @endsection

@@ -29,15 +29,12 @@ class MenuHelper
     }
 
     public static function parentActive($parent){
-        $current = explode('/',Route::getFacadeRoot()->current()->uri())[0];
-        return $current == $parent;
+        $current = Route::getFacadeRoot()->current()->uri();
+        return str_starts_with($current, $parent);
     }
 
     public static function submenuActive($submenu){
-        $current = explode('/', Route::getFacadeRoot()->current()->uri());
-        if(sizeof($current) > 1){
-            return implode('/',[$current[0], $current[1]]) == $submenu;
-        }
-        return $current[0] == $submenu;
+        $current = Route::getFacadeRoot()->current()->uri();
+        return str_starts_with($current, $submenu);
     }
 }

@@ -42,4 +42,24 @@ class LokasiModel extends Model
         return DB::table('lokasi_kerja')->where('id',$id)->update($updateLokasi);
     }
 
+    public function getPesertaLokasi($id){
+        return DB::select("SELECT p.npm, p.nama, p.prodi, p.fakultas,
+            (select keterangan from jenis_kelamin jk where jk.id=p.jenis_kelamin) as jenis_kelamin
+            from (select * from lokasi_kerja_peserta where id_lokasi=?) lkp
+            join peserta p on p.npm=lkp.npm", [$id]);
+    }
+
+    public function checkPesertaLokasiExists($idLokasi, $npm){
+        return DB::table('lokasi_kerja_peserta')->where('npm', $npm)->where('id_lokasi', $idLokasi)->first();
+    }
+
+    public function insertPesertaLokasi($data){
+        $data['user_insert'] = session('username');
+        return DB::table('lokasi_kerja_peserta')->insert($data);
+    }
+
+    public function deletePesertaLokasi($idLokasi, $npm){
+        return DB::table('lokasi_kerja_peserta')->where('npm', $npm)
+            ->where('id_lokasi', $idLokasi)->delete();
+    }
 }

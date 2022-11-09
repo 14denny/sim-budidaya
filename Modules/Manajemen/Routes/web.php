@@ -13,10 +13,17 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('manajemen')->name('lokasi.')->middleware(['managerOnly'])->group(function() {
-    Route::get('/lokasi', 'LokasiController@all')->name('all');
-    Route::get('/lokasi/getOne', 'LokasiController@getOne')->name('getOne');
-    Route::delete('/lokasi', 'LokasiController@delete')->name('delete');
-    Route::post('/lokasi', 'LokasiController@insert')->name('insert');
-    Route::put('/lokasi', 'LokasiController@edit')->name('edit');
+Route::prefix('manajemen/lokasi')->name('lokasi.')->middleware(['managerOnly'])->group(function() {
+    Route::get('/', 'LokasiController@all')->name('all');
+    Route::get('/getOne', 'LokasiController@getOne')->name('getOne');
+    Route::delete('/', 'LokasiController@delete')->name('delete');
+    Route::post('/', 'LokasiController@insert')->name('insert');
+    Route::put('/', 'LokasiController@edit')->name('edit');
+});
+Route::prefix('manajemen/asign_lokasi')->name('asign_lokasi.')->middleware(['managerOnly'])->group(function() {
+    Route::get('/', 'LokasiPesertaController@all')->name('all');
+    Route::post('/', 'LokasiPesertaController@addPesertaLokasi')->name('insert');
+    Route::delete('/', 'LokasiPesertaController@deletePesertaLokasi')->name('delete');
+    Route::get('/{id}', 'LokasiPesertaController@asignPeserta')->name('asign');
+    Route::post('/cari-mhs', 'LokasiPesertaController@cariMhs')->name('cariMhs');
 });

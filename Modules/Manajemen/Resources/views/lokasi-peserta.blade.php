@@ -5,46 +5,12 @@
 @endsection
 
 @section('subtitle')
-    Lokasi Budidaya
+    Penetapan Lokasi Peserta
 @endsection
 
 @section('body')
     <div class="row">
-        <div class="col-md-3">
-            <div class="shadow-sm card card-flush mb-0" data-kt-sticky="true" data-kt-sticky-name="docs-sticky-summary"
-                data-kt-sticky-offset="{default: false, xl: '200px'}" data-kt-sticky-width="{lg: '250px', xl: '300px'}"
-                data-kt-sticky-left="auto" data-kt-sticky-top="100px" data-kt-sticky-animation="false"
-                data-kt-sticky-zindex="95">
-                <div class="card-header bg-success">
-                    <h4 class="card-title">Tambah Lokasi</h4>
-                </div>
-                <div class="card-body">
-                    <form id="form-add-lokasi">
-                        @csrf
-                        <div class="form-group mb-4">
-                            <label class="form-label">Nama Lokasi</label>
-                            <input type="text" name="nama_lokasi" id="nama_lokasi" placeholder="Nama Lokasi"
-                                class="form-control form-control-solid">
-                        </div>
-                        <div class="form-group mb-4">
-                            <label class="form-label">Alamat</label>
-                            <input type="text" name="propinsi" id="propinsi" placeholder="Propinsi"
-                                class="form-control form-control-solid mb-4">
-                            <input type="text" name="kabkota" id="kabkota" placeholder="Kabupaten/kota"
-                                class="form-control form-control-solid mb-4">
-                            <input type="text" name="kecamatan" id="kecamatan" placeholder="Kecamatan"
-                                class="form-control form-control-solid mb-4">
-                            <input type="text" name="desa" id="desa" placeholder="Desa"
-                                class="form-control form-control-solid mb-4">
-                        </div>
-                        <div class="form-group mt-4 text-end">
-                            <button type="submit" class="btn btn-success">Tambah Lokasi</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-9">
+        <div class="col-md-12">
             <div class="card shadow-sm card-flush">
                 <div class="card-header border-0 py-5">
                     <div class="col-12">
@@ -153,15 +119,12 @@
                                     <td>{{ $item->nama_lokasi }}</td>
                                     <td>{{ "$item->propinsi, $item->kabkota, $item->kecamatan, $item->desa" }}</td>
                                     <td>
-                                        <button class="btn btn-sm btn-danger btn-icon" onclick="deleteLokasi(this)"
-                                            data-id="{{ $item->id }}" data-nama="{{ $item->nama_lokasi }}"><i
-                                                class="fa fa-trash"></i>
-                                        </button>
-                                        <button onclick="editLokasi(this)" data-id="{{ $item->id }}"
-                                            data-nama="{{ $item->nama_lokasi }}"
-                                            class="btn btn-sm btn-icon btn-light-primary">
-                                            <i class="fa fa-edit"></i>
-                                        </button>
+                                        <a href="{{ route('asign_lokasi.asign', ['id' => $item->id]) }}"
+                                            class="btn btn-sm border border-primary btn-light-primary"
+                                            style="white-space: nowrap" onclick="asignPeserta(this)"
+                                            data-id="{{ $item->id }}" data-nama="{{ $item->nama_lokasi }}">
+                                            <i class="fa fa-users"></i>Atur Peserta
+                                        </a>
                                     </td>
                                 </tr>
                             @endforeach

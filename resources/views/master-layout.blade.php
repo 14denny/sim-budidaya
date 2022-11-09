@@ -721,6 +721,12 @@ License: For each use you must have a valid license purchased only from above li
     <script>
         var csrf_token = "{{ csrf_token() }}"
     </script>
+    @if (Session::has('status'))
+    <script>
+        showSwal("{{Session::get('status')}}", "{!! Session::get('msg') !!}")
+    </script>
+    @endif
+
     @hasSection('js')
         @yield('js')
     @endif
