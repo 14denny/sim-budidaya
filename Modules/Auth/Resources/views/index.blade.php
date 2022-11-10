@@ -211,6 +211,7 @@ License: For each use you must have a valid license purchased only from above li
                 return;
             }
 
+            showSwalLoader()
             $.ajax({
                 url: '{{route("auth.login")}}',
                 dataType:'json',

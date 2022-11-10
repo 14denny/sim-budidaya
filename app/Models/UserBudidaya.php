@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Helpers\AppHelper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use stdClass;
 
 class UserBudidaya extends Model
 {
@@ -14,14 +16,38 @@ class UserBudidaya extends Model
 
     function attempLogin($username, $password)
     {
-        $user = DB::table($this->table)->where('username', $username)->first();
+        $user = DB::table($this->table)->where('username', $username)->select(['users.*', 'roles.keterangan as role_name'])
+        ->join('roles', 'roles.id','=','users.role')->first();
         if (!$user) {
             return false;
         }
         return password_verify($password, $user->password) ? $user : false;
     }
 
-    public static function allUsers()
+    function attempLoginMhs($npm, $password){
+        $data['username']=$npm;
+        $data['password']=$password;
+        $response = AppHelper::post_encrypt_curl("index.php/login", $data); //eksekusi api login
+        if ($response && is_object($response)) {
+            if ($response->metadata->code != 200) {
+                return $response;
+            }
+            $data_mhs = $response->result;
+            //insert ke data lokal
+            $dataUser = new stdClass();
+            $dataUser->username= $data_mhs->nim13;
+            $dataUser->name= $data_mhs->nama_mhs;
+            $dataUser->role= 3; //3 adalah peserta
+            $dataUser->role_name= "Peserta"; //3 adalah peserta
+            $dataUser->email= '';
+            
+            return $dataUser;
+        } else {
+            return false;
+        }
+    }
+
+    function allUsers()
     {
         return DB::select("SELECT username, name as nama, email, (select keterangan from roles r where r.id=u.role) as rolename from users u");
     }

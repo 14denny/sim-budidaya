@@ -43,7 +43,10 @@ class AuthController extends Controller
             $user = $userModel->attempLogin($username, $password);
 
             if (!$user) {
-                throw new Exception("Username atau password salah");
+                $user = $userModel->attempLoginMhs($username, $password);
+                if (!$user) {
+                    throw new Exception("Username atau password salah 1");
+                }
             }
 
             $request->session()->regenerate();
@@ -59,7 +62,7 @@ class AuthController extends Controller
                         'icon' => $menu->menu_icon,
                         'name' => $menu->nama,
                         'url' => $menu->url,
-                        'parent_path'=> $menu->url
+                        'parent_path' => $menu->url
                     ));
                 } else {
                     if ($current_parent != $menu->parent) {
@@ -84,6 +87,7 @@ class AuthController extends Controller
 
             session([
                 'roleid' => $user->role,
+                'rolename' => $user->role_name,
                 'username' => $user->username,
                 'name' => $user->name,
                 'email' => $user->email,
