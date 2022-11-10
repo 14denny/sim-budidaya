@@ -40,6 +40,18 @@ class UsersController extends Controller
                 throw new Exception("Harap isi semua data dengan benar");
             }
 
+            if(preg_match('/[^a-zA-Z0-9_-]+/', $username)){
+                throw new Exception("Username hanya boleh mengandung karakter angka, huruf, strip (-) dan/atau underscore (_)");
+            }
+
+            if (preg_match('/^[0-9]+$/', $username)) {
+                throw new Exception("Username tidak boleh terdiri hanya dari angka");
+            }
+
+            if (!preg_match('/[a-zA-Z]+/', $username)) {
+                throw new Exception("Username harus mengandung huruf");
+            }
+
             if ($password != $passwordConf) {
                 throw new Exception("Password dan konfirmasi password tidak sama");
             }
