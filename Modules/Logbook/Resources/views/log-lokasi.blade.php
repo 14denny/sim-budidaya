@@ -246,5 +246,6 @@
         const urlInsertHamaPenyakit = "{{ route('log.insertHamaPenyakit') }}"
         const urlClearLogTmp = "{{ route('log.clearLogTmp') }}"
         const urlDeleteHamaPenyakit = "{{ route('log.deleteHamaPenyakitTmp') }}"
+        const idLokasi = "{{$lokasi->id}}"
     </script>
 @endsection

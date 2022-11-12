@@ -38,7 +38,7 @@ function changeFase(el) {
     divSelectkegiatan.html('')
     divSelectDetilKegiatan.html('')
 
-    if(!fase){
+    if (!fase) {
         return
     }
 
@@ -77,7 +77,7 @@ function changeTahap(el) {
     divSelectkegiatan.html('')
     divSelectDetilKegiatan.html('')
 
-    if(!tahap){
+    if (!tahap) {
         return
     }
 
@@ -175,12 +175,20 @@ function toggleAddHama(el) {
 }
 
 function closeModal() {
-    $("#form-add-log").trigger('reset')
-    $("#fase").val('').trigger('change')
-    $("#ada_hama_penyakit").trigger('change')
-    $("#hama_penyakit").val('').trigger('change')
-    $("#list-hama-penyakit").html('')
-    $("#modal-add-log").modal('hide')
+    swalConfirm('Konfirmasi', 'Kamu yakin ingin menutup halaman ini? Data yang sudah kamu input akan dihapus.',
+    'Ya, yakin',
+    'danger',
+    ()=>{
+        $("#form-add-log").trigger('reset')
+        $("#fase").val('').trigger('change')
+        $("#ada_hama_penyakit").trigger('change')
+        $("#hama_penyakit").val('').trigger('change')
+        $("#list-hama-penyakit").html('')
+        $("#modal-add-log").modal('hide')
+    },
+    ()=>{
+
+    })
 }
 
 function openModal() {
@@ -191,8 +199,9 @@ function openModal() {
         url: urlClearLogTmp,
         type: 'post',
         dataType: 'json',
-        data:{
-            _token: csrf_token
+        data: {
+            _token: csrf_token,
+            id_lokasi: idLokasi
         },
         success: (result) => {
             csrf_token = result.csrf_token;
@@ -211,12 +220,12 @@ function openModal() {
         swalFailed()
     })
 
-    
+
 }
 
-function tambahHamaPenyakit(){
+function tambahHamaPenyakit() {
     const idHamaPenyakit = $("#hama_penyakit").val()
-    if(!idHamaPenyakit){
+    if (!idHamaPenyakit) {
         return;
     }
 
@@ -227,27 +236,29 @@ function tambahHamaPenyakit(){
         dataType: 'json',
         data: {
             _token: csrf_token,
-            hama_penyakit: idHamaPenyakit
+            hama_penyakit: idHamaPenyakit,
+            id_lokasi: idLokasi,
         },
         success: (result) => {
             csrf_token = result.csrf_token;
             $('input[name=_token]').val(csrf_token)
 
-            if(result.status){
+            if (result.status) {
+                $("#list-hama-penyakit").html('')
                 closeSwal()
-                const hamaPenyakit = result.hamaPenyakit;
+                const listHamaPenyakit = result.listHamaPenyakit;
 
-                const tr = `
-                <tr>
-                    <td class="text-center align-middle">${hamaPenyakit.jenis_hama_penyakit}</td>
-                    <td class="align-middle">${hamaPenyakit.ket}</td>
-                    <td class="text-center">
-                        <button type="button" onclick="hapusHamaPenyakitTmp(this)" data-id="${result.idHamaPenyakitTmp}" class="btn btn-sm btn-icon btn-light-danger"><i class="fa fa-trash"></i></button>
-                    </td>
-                </tr>
-                `;
-
-                $("#list-hama-penyakit").append(tr);
+                $.each(listHamaPenyakit, (index, hamaPenyakitTmp) => {
+                    $("#list-hama-penyakit").append(`
+                    <tr>
+                        <td class="text-center align-middle">${hamaPenyakitTmp.jenis_hama_penyakit}</td>
+                        <td class="align-middle">${hamaPenyakitTmp.ket}</td>
+                        <td class="text-center">
+                            <button type="button" onclick="hapusHamaPenyakitTmp(this)" data-id="${hamaPenyakitTmp.id_hama_penyakit_tmp}" class="btn btn-sm btn-icon btn-light-danger"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    `);
+                });
 
                 //clear select
                 $("#hama_penyakit").val('').trigger('change')
@@ -255,15 +266,15 @@ function tambahHamaPenyakit(){
                 showSwal('error', result.msg)
             }
         }
-    }).fail(()=>{
+    }).fail(() => {
         swalFailed()
     })
 }
 
-function hapusHamaPenyakitTmp(el){
+function hapusHamaPenyakitTmp(el) {
     const btn = $(el)
     const idHamaPenyakitTmp = btn.data('id')
-    if (!idHamaPenyakitTmp){
+    if (!idHamaPenyakitTmp) {
         return;
     }
 
@@ -274,20 +285,21 @@ function hapusHamaPenyakitTmp(el){
         dataType: 'json',
         data: {
             _token: csrf_token,
-            id_hama_penyakit_tmp: idHamaPenyakitTmp
+            id_hama_penyakit_tmp: idHamaPenyakitTmp,
+            id_lokasi: idLokasi,
         },
         success: (result) => {
             csrf_token = result.csrf_token;
             $('input[name=_token]').val(csrf_token)
 
-            if(result.status){
+            if (result.status) {
                 closeSwal()
                 btn.closest('tr').remove()
             } else {
                 showSwal('error', result.msg)
             }
         }
-    }).fail(()=>{
+    }).fail(() => {
         swalFailed()
     })
 }

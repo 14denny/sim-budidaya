@@ -154,9 +154,18 @@ class LogbookController extends Controller
     {
         try {
             $idHamaPenyakit = $request->post('hama_penyakit');
+            $idLokasi = $request->post('id_lokasi');
 
             if (!$idHamaPenyakit) {
                 throw new \Exception("ID hama/penyakit tidak ditemukan");
+            }
+            if (!$idLokasi) {
+                throw new \Exception("ID Lokasi tidak ditemukan");
+            }
+
+            $lokasiModel = new LokasiModel();
+            if(!$lokasiModel->getLokasiById($idLokasi)){
+                throw new \Exception("Lokasi tidak dapat ditemukan");
             }
 
             $hamaPenyakitModel = new HamaPenyakitModel();
@@ -168,22 +177,24 @@ class LogbookController extends Controller
             $logbookModel = new LogbookModel();
             $npm = session('username');
 
-            if ($logbookModel->checkIdHamaPenyakitTmpExists($npm, $idHamaPenyakit)) {
+            if ($logbookModel->checkIdHamaPenyakitTmpExists($idLokasi, $idHamaPenyakit)) {
                 throw new \Exception("Hama/penyakit sudah pernah dimasukkan");
             }
 
             $dataInsert = array(
-                'npm' => $npm,
+                'id_lokasi' => $idLokasi,
+                'npm_insert' => $npm,
                 'id_hama_penyakit' => $idHamaPenyakit
             );
 
             $idInsert = $logbookModel->insertHamaPenyakitTmp($dataInsert);
             if ($idInsert) {
+                $listHamaPenyakit = $logbookModel->getHamaPenyakitTmp($idLokasi);
+
                 echo json_encode(array(
                     'status' => true,
                     'msg' => 'Ok',
-                    'idHamaPenyakitTmp' => $idInsert,
-                    'hamaPenyakit' => $hamaPenyakit,
+                    'listHamaPenyakit' => $listHamaPenyakit,
                     'csrf_token' => csrf_token()
                 ));
             } else {
@@ -198,12 +209,12 @@ class LogbookController extends Controller
         }
     }
 
-    function clearLogTmp(){
+    function clearLogTmp(Request $request){
         try {
-            $npm = session('username');
+            $idLokasi = $request->post('id_lokasi');
 
             $logbookModel = new LogbookModel();
-            $logbookModel->clearHamaPenyakitTmp($npm);
+            $logbookModel->clearHamaPenyakitTmp($idLokasi);
             
             echo json_encode(array(
                 'status' => true,
@@ -221,15 +232,15 @@ class LogbookController extends Controller
 
     function deleteHamaPenyakitTmp(Request $request){
         try {
-            $npm = session('username');
+            $idLokasi = $request->post('id_lokasi');
             $idHamaPenyakitTmp = $request->post('id_hama_penyakit_tmp');
 
             $logbookModel = new LogbookModel();
-            if(!$logbookModel->checkHamaPenyakitTmp($npm, $idHamaPenyakitTmp)){
+            if(!$logbookModel->checkHamaPenyakitTmp($idLokasi, $idHamaPenyakitTmp)){
                 throw new \Exception("Data hama penyakit tidak dapat ditemukan");
             }
 
-            if($logbookModel->deleteHamaPenyakitTmp($npm, $idHamaPenyakitTmp)){
+            if($logbookModel->deleteHamaPenyakitTmp($idLokasi, $idHamaPenyakitTmp)){
                 echo json_encode(array(
                     'status' => true,
                     'msg' => 'Ok',

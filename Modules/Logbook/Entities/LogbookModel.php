@@ -32,44 +32,62 @@ class LogbookModel extends Model
         return DB::table('kegiatan')->where('id_tahap', $idTahap)->get();
     }
 
-    function getDetilKegiatan($idKegiatan){
+    function getDetilKegiatan($idKegiatan)
+    {
         return DB::table('detil_kegiatan')->where('id_kegiatan', $idKegiatan)->get();
     }
 
-    function getAllHamaPenyakit(){
+    function getAllHamaPenyakit()
+    {
         return DB::table('hama_penyakit')->select(['hama_penyakit.*', 'jenis_hama_penyakit.ket as jenis_hama_penyakit'])
-        ->join('jenis_hama_penyakit', 'jenis_hama_penyakit.id','=', 'hama_penyakit.jenis')
-        ->orderBy('jenis')->get();
+            ->join('jenis_hama_penyakit', 'jenis_hama_penyakit.id', '=', 'hama_penyakit.jenis')
+            ->orderBy('jenis')->get();
     }
 
-    function checkIdHamaPenyakitTmpExists($npm, $idHamaPenyakit){
+    function checkIdHamaPenyakitTmpExists($idLokasi, $idHamaPenyakit)
+    {
         return DB::table('hama_penyakit_log_tmp')
-            ->where('npm', $npm)
-            ->where('id_hama_penyakit',$idHamaPenyakit)
+            ->where('id_lokasi', $idLokasi)
+            ->where('id_hama_penyakit', $idHamaPenyakit)
             ->first();
     }
 
-    function checkHamaPenyakitTmp($npm, $idHamaPenyakitTmp){
+    function checkHamaPenyakitTmp($idLokasi, $idHamaPenyakitTmp)
+    {
         return DB::table('hama_penyakit_log_tmp')
-            ->where('npm', $npm)
+            ->where('id_lokasi', $idLokasi)
             ->where('id', $idHamaPenyakitTmp)
             ->first();
     }
 
-    function deleteHamaPenyakitTmp($npm, $idHamaPenyakitTmp){
+    function deleteHamaPenyakitTmp($idLokasi, $idHamaPenyakitTmp)
+    {
         return DB::table('hama_penyakit_log_tmp')
-            ->where('npm', $npm)
+            ->where('id_lokasi', $idLokasi)
             ->where('id', $idHamaPenyakitTmp)
             ->delete();
     }
 
-    function insertHamaPenyakitTmp($dataInsert){
+    function insertHamaPenyakitTmp($dataInsert)
+    {
         return DB::table('hama_penyakit_log_tmp')->insertGetId($dataInsert);
     }
 
-    function clearHamaPenyakitTmp($npm){
+    function clearHamaPenyakitTmp($idLokasi)
+    {
         return DB::table('hama_penyakit_log_tmp')
-        ->where('npm', $npm)
-        ->delete();
+            ->where('id_lokasi', $idLokasi)
+            ->delete();
+    }
+
+    function getHamaPenyakitTmp($idLokasi)
+    {
+        return DB::table('hama_penyakit_log_tmp')
+            ->select(['hama_penyakit.*', 'jenis_hama_penyakit.ket as jenis_hama_penyakit', 'hama_penyakit_log_tmp.id as id_hama_penyakit_tmp'])
+            ->join('hama_penyakit', 'hama_penyakit.id', '=', 'hama_penyakit_log_tmp.id_hama_penyakit')
+            ->join('jenis_hama_penyakit', 'jenis_hama_penyakit.id', '=', 'hama_penyakit.jenis')
+            ->where('hama_penyakit_log_tmp.id_lokasi', $idLokasi)
+            ->orderBy('hama_penyakit_log_tmp.inserted_at')
+            ->get();
     }
 }
