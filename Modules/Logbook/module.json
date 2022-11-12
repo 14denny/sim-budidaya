@@ -1,0 +1,11 @@
+{
+    "name": "Logbook",
+    "alias": "logbook",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Logbook\\Providers\\LogbookServiceProvider"
+    ],
+    "files": []
+}

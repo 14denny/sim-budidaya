@@ -35,4 +35,9 @@ class PesertaModel extends Model
     public function insertPeserta($data){
         return DB::table('peserta')->insert($data);
     }
+
+    function getAllLokasiPeserta($npm){
+        return DB::table('lokasi_kerja_peserta')->select(['lokasi_kerja.*'])
+        ->join('lokasi_kerja', 'lokasi_kerja.id','=', 'lokasi_kerja_peserta.id_lokasi')->where('lokasi_kerja_peserta.npm', $npm)->get();
+    }
 }

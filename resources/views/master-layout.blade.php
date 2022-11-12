@@ -43,6 +43,9 @@ License: For each use you must have a valid license purchased only from above li
             white-space: nowrap;
         }
     </style>
+    @hasSection('css')
+        @yield('css')
+    @endif
 </head>
 <!--end::Head-->
 <!--begin::Body-->
@@ -110,7 +113,7 @@ License: For each use you must have a valid license purchased only from above li
                                 <!--begin:Menu item-->
                                 <div {!! !$p['url']
                                     ? 'data-kt-menu-trigger="{default: \'click\', lg: \'hover\'}"
-                                                                                                                                                                                                                                                                data-kt-menu-placement="right-start"'
+                                                                                                                                                                                                                                                                                                                                data-kt-menu-placement="right-start"'
                                     : '' !!} class="menu-item {{ $parentActive ? 'here' : '' }} py-2">
                                     <!--begin:Menu link-->
                                     <a class="menu-link menu-center" href="{{ $p['url'] ?: '#' }}">
@@ -122,7 +125,7 @@ License: For each use you must have a valid license purchased only from above li
                                                 {{ $p['name'] }}
                                             </a>
                                         @else --}}
-                                        <span class="menu-title">{{ $p['name'] }}</span>
+                                        <span class="menu-title text-center">{{ $p['name'] }}</span>
                                         {{-- @endif --}}
                                     </a>
                                     <!--end:Menu link-->
@@ -401,11 +404,11 @@ License: For each use you must have a valid license purchased only from above li
                                                 <!--begin::Username-->
                                                 <div class="d-flex flex-column">
                                                     <div class="fw-bold d-flex align-items-center fs-5">
-                                                        {{session('name','---')}}
+                                                        {{ session('name', '---') }}
                                                     </div>
                                                     <div class="flex-row">
-                                                        <span 
-                                                            class="badge badge-primary fw-semibold fs-7">{{session('rolename','---')}}</span>
+                                                        <span
+                                                            class="badge badge-primary fw-semibold fs-7">{{ session('rolename', '---') }}</span>
                                                     </div>
                                                 </div>
                                                 <!--end::Username-->
@@ -647,8 +650,10 @@ License: For each use you must have a valid license purchased only from above li
                 <!--begin::Content-->
                 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
                     <!--begin::Container-->
-                    <div id="kt_content_container" class="container-xxl">
-                        @yield('body')
+                    <div id="kt_content_container" class="flex-column-fluid container-xxl">
+                        <div class="content flex-row-fluid">
+                            @yield('body')
+                        </div>
                     </div>
                     <!--end::Container-->
                 </div>
@@ -723,9 +728,9 @@ License: For each use you must have a valid license purchased only from above li
         var csrf_token = "{{ csrf_token() }}"
     </script>
     @if (Session::has('status'))
-    <script>
-        showSwal("{{Session::get('status')}}", "{!! Session::get('msg') !!}")
-    </script>
+        <script>
+            showSwal("{{ Session::get('status') }}", "{!! Session::get('msg') !!}")
+        </script>
     @endif
 
     @hasSection('js')

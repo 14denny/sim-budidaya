@@ -2,5 +2,6 @@
     "Auth": true,
     "Beranda": true,
     "Users": true,
-    "Manajemen": true
+    "Manajemen": true,
+    "Logbook": true
 }

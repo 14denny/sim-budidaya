@@ -33,13 +33,14 @@ class UserBudidaya extends Model
                 return $response;
             }
             $data_mhs = $response->result;
-            //insert ke data lokal
+
+            //data return
             $dataUser = new stdClass();
-            $dataUser->username= $data_mhs->nim13;
-            $dataUser->name= $data_mhs->nama_mhs;
-            $dataUser->role= 3; //3 adalah peserta
-            $dataUser->role_name= "Peserta"; //3 adalah peserta
-            $dataUser->email= '';
+            $dataUser->username = $data_mhs->nim13;
+            $dataUser->name = $data_mhs->nama_mhs;
+            $dataUser->role = 3; //3 adalah peserta
+            $dataUser->role_name = "Peserta"; //3 adalah peserta
+            $dataUser->email = '';
             
             return $dataUser;
         } else {
