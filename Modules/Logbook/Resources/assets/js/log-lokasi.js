@@ -1,5 +1,6 @@
 "use strict"
-var dropzone;
+var dropzone, dropzoneEdit;
+var datePickerEdit, startTimePickerEdit, endTimePickerEdit;
 var ModalAddLog = function () {
     var tglPicker, startTimePicker, endTimePicker;
     return {
@@ -24,6 +25,7 @@ var ModalAddLog = function () {
 }();
 
 var file_uploaded = [];
+var file_uploaded_edit = [];
 
 const tableLog = KTDataTable;
 KTUtil.onDOMContentLoaded((function () {
@@ -34,31 +36,28 @@ KTUtil.onDOMContentLoaded((function () {
             this.on('removedfile', function (file) {
                 if (!this.cleaningUp) {
                     if (file.accepted) {
-                        const status = window.confirm('Kamu yakin ingin menghapus berkas ini?')
-                        if (status) {
-                            $.each(file_uploaded, (index, item) => {
-                                if (item.name == file.name) {
-                                    $.ajax({
-                                        url: urlDeleteFotoTmp,
-                                        dataType: 'json',
-                                        type: 'post',
-                                        data: {
-                                            _token: csrf_token,
-                                            filename: item.hashName
-                                        },
-                                        success: (result) => {
-                                            csrf_token = result.csrf_token;
-                                            $("input[name=_token]").val(csrf_token)
+                        $.each(file_uploaded, (index, item) => {
+                            if (item.name == file.name) {
+                                $.ajax({
+                                    url: urlDeleteFotoTmp,
+                                    dataType: 'json',
+                                    type: 'post',
+                                    data: {
+                                        _token: csrf_token,
+                                        filename: item.hashName
+                                    },
+                                    success: (result) => {
+                                        csrf_token = result.csrf_token;
+                                        $("input[name=_token]").val(csrf_token)
 
-                                            $(`img[alt='${file.name}']`).closest('.dz-image-preview').remove()
-                                        }
-                                    }).fail(() => {
-                                        swalFailed()
-                                    })
-                                }
-                            })
-                        }
-                        return status;
+                                        $(`img[alt='${file.name}']`).closest('.dz-image-preview').remove()
+                                    }
+                                }).fail(() => {
+                                    swalFailed()
+                                })
+                            }
+                        })
+                        return true;
                     } else {
                         $(`img[alt='${file.name}']`).closest('.dz-image-preview').remove()
                         return true;
@@ -71,6 +70,7 @@ KTUtil.onDOMContentLoaded((function () {
                 this.cleaningUp = false;
             };
         },
+        dictRemoveFileConfirmation: "Kamu yakin ingin menghapus foto ini?",
         url: urlUploadFotoTmp,
         params: {
             _token: csrf_token,
@@ -90,6 +90,76 @@ KTUtil.onDOMContentLoaded((function () {
             const res = JSON.parse(response)
             if (res.status) {
                 file_uploaded.push({
+                    name: file.name,
+                    hashName: res.filename
+                });
+            } else {
+                showSwal('error', res.msg)
+            }
+
+        }
+    })
+
+    dropzoneEdit = new Dropzone("#foto-log-edit", {
+        init: function () {
+            this.cleaningUp = false;
+            this.on('removedfile', function (file) {
+                if (!this.cleaningUp) {
+                    if (file.accepted) {
+                        $.each(file_uploaded_edit, (index, item) => {
+                            if (item.name == file.name) {
+                                $.ajax({
+                                    url: urlDeleteFotoTmp,
+                                    dataType: 'json',
+                                    type: 'post',
+                                    data: {
+                                        _token: csrf_token,
+                                        filename: item.hashName
+                                    },
+                                    success: (result) => {
+                                        csrf_token = result.csrf_token;
+                                        $("input[name=_token]").val(csrf_token)
+
+                                        $(`img[alt='${file.name}']`).closest('.dz-image-preview').remove()
+                                    }
+                                }).fail(() => {
+                                    swalFailed()
+                                })
+                            }
+                        })
+                        return true;
+                    } else {
+                        $(`img[alt='${file.name}']`).closest('.dz-image-preview').remove()
+                        return true;
+                    }
+                }
+            });
+            this.cleanUp = function () {
+                this.cleaningUp = true;
+                this.removeAllFiles();
+                this.cleaningUp = false;
+            };
+        },
+        dictRemoveFileConfirmation: "Kamu yakin ingin menghapus foto ini?",
+        url: urlUploadFotoTmp,
+        params: {
+            _token: csrf_token,
+        },
+        paramName: "file_unggah",
+        maxFiles: 4,
+        maxFilesize: 5, // MB
+        addRemoveLinks: true,
+        accept: function (file, done) {
+            if (!file.type.startsWith('image/')) {
+                done('Berkas yang dapat diunggah hanya gambar.')
+            } else {
+                done()
+            }
+        },
+        success: function (file, response) {
+            const res = JSON.parse(response)
+            if (res.status) {
+                file_uploaded_edit.push({
                     name: file.name,
                     hashName: res.filename
                 });
@@ -129,11 +199,31 @@ KTUtil.onDOMContentLoaded((function () {
             $(row).addClass("log-" + $(cells[0]).data('id'));
         }
     })
+
+    datePickerEdit = flatpickr($('#tgl_log-edit'), {
+        enableTime: false,
+        dateFormat: "d-m-Y",
+        maxDate: 'today',
+    });
+    startTimePickerEdit = flatpickr($("#time_start-edit"), {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+    });
+    endTimePickerEdit = flatpickr($("#time_end-edit"), {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+    });
 }));
 
 const divSelectTahap = $("#select-tahap");
 const divSelectkegiatan = $("#select-kegiatan");
 const divSelectDetilKegiatan = $("#select-detil-kegiatan");
+
+const divSelectTahapEdit = $("#select-tahap-edit");
+const divSelectkegiatanEdit = $("#select-kegiatan-edit");
+const divSelectDetilKegiatanEdit = $("#select-detil-kegiatan-edit");
 
 function changeFase(el) {
     const select = $(el)
@@ -166,6 +256,47 @@ function changeFase(el) {
                 divSelectTahap.html(result.html)
                 $("#tahap").select2({
                     dropdownParent: '#select-tahap',
+                })
+            } else {
+                showSwal('error', result.msg)
+            }
+        }
+    }).fail(() => {
+        swalFailed()
+    })
+}
+function changeFaseEdit(el) {
+    const select = $(el)
+
+    const fase = select.val();
+
+    divSelectTahapEdit.html('')
+    divSelectkegiatanEdit.html('')
+    divSelectDetilKegiatanEdit.html('')
+
+    if (!fase) {
+        return
+    }
+
+    showSwalLoader()
+    $.ajax({
+        url: urlGetTahap,
+        dataType: 'json',
+        type: 'post',
+        data: {
+            _token: csrf_token,
+            fase: fase,
+            edit: 1
+        },
+        success: (result) => {
+            csrf_token = result.csrf_token;
+            $("input[name=_token]").val(csrf_token)
+
+            if (result.status) {
+                closeSwal()
+                divSelectTahapEdit.html(result.html)
+                $("#tahap-edit").select2({
+                    dropdownParent: '#select-tahap-edit',
                 })
             } else {
                 showSwal('error', result.msg)
@@ -215,6 +346,46 @@ function changeTahap(el) {
     })
 }
 
+function changeTahapEdit(el) {
+    const select = $(el)
+
+    const tahap = select.val();
+    divSelectkegiatanEdit.html('')
+    divSelectDetilKegiatanEdit.html('')
+
+    if (!tahap) {
+        return
+    }
+
+    showSwalLoader()
+    $.ajax({
+        url: urlGetKegiatan,
+        dataType: 'json',
+        type: 'post',
+        data: {
+            _token: csrf_token,
+            tahap: tahap,
+            edit: 1
+        },
+        success: (result) => {
+            csrf_token = result.csrf_token;
+            $("input[name=_token]").val(csrf_token)
+
+            if (result.status) {
+                closeSwal()
+                divSelectkegiatanEdit.html(result.html)
+                $("#kegiatan-edit").select2({
+                    dropdownParent: '#select-kegiatan-edit',
+                })
+            } else {
+                showSwal('error', result.msg)
+            }
+        }
+    }).fail(() => {
+        swalFailed()
+    })
+}
+
 function changeKegiatan(el) {
     const select = $(el)
 
@@ -253,6 +424,45 @@ function changeKegiatan(el) {
     })
 }
 
+function changeKegiatanEdit(el) {
+    const select = $(el)
+
+    const kegiatan = select.val();
+    divSelectDetilKegiatanEdit.html('')
+
+    if (!kegiatan) {
+        return
+    }
+
+    showSwalLoader()
+    $.ajax({
+        url: urlGetDetilKegiatan,
+        dataType: 'json',
+        type: 'post',
+        data: {
+            _token: csrf_token,
+            kegiatan: kegiatan,
+            edit: 1
+        },
+        success: (result) => {
+            csrf_token = result.csrf_token;
+            $("input[name=_token]").val(csrf_token)
+
+            if (result.status) {
+                closeSwal()
+                divSelectDetilKegiatanEdit.html(result.html)
+                $("#detil-kegiatan-edit").select2({
+                    dropdownParent: '#select-detil-kegiatan-edit',
+                })
+            } else {
+                showSwal('error', result.msg)
+            }
+        }
+    }).fail(() => {
+        swalFailed()
+    })
+}
+
 function getDeskripsiHamaPenyakit(el) {
     const select = $(el)
     const selectedOpt = select.find(':selected')
@@ -270,6 +480,23 @@ function getDeskripsiHamaPenyakit(el) {
 
 }
 
+function getDeskripsiHamaPenyakitEdit(el) {
+    const select = $(el)
+    const selectedOpt = select.find(':selected')
+    if (selectedOpt.val()) {
+        const ketJenis = selectedOpt.data('ket-jenis')
+        const deskripsi = selectedOpt.data('desc')
+
+        $("#desc-edit").html(`
+            <strong>JENIS: ${ketJenis}</strong><br>` +
+            (deskripsi ? `<strong>DESKRIPSI:</strong><br>${deskripsi}` : '')
+        )
+    } else {
+        $("#desc-edit").html('')
+    }
+
+}
+
 function toggleAddHama(el) {
     const checkbox = $(el)
     if (checkbox.prop('checked')) {
@@ -280,17 +507,40 @@ function toggleAddHama(el) {
     }
 }
 
+function toggleAddHamaEdit(el) {
+    const checkbox = $(el)
+    if (checkbox.prop('checked')) {
+        $("#add-hama-penyakit-edit").slideDown()
+    } else {
+        $("#hama_penyakit-edit").val('').trigger('change')
+        $("#add-hama-penyakit-edit").slideUp()
+    }
+}
+
 function clearForm() {
     $("#form-add-log").trigger('reset')
     $("#fase").val('').trigger('change')
     $("#ada_hama_penyakit").trigger('change')
     $("#hama_penyakit").val('').trigger('change')
     $("#list-hama-penyakit").html('')
-    $("#id_logbook").val('')
-    $("#mode").html('Tambah')
     dropzone.cleanUp()
     file_uploaded = []
     $("#modal-add-log").modal('hide')
+}
+
+function clearFormEdit() {
+    $("#form-add-log-edit").trigger('reset')
+    $("#select-fase-edit").html('')
+    $("#select-tahap-edit").html('')
+    $("#select-kegiatan-edit").html('')
+    $("#select-detil-kegiatan-edit").html('')
+    $("#ada_hama_penyakit-edit").trigger('change')
+    $("#hama_penyakit-edit").val('').trigger('change')
+    $("#list-hama-penyakit-edit").html('')
+    $("#id_logbook").val('')
+    dropzoneEdit.cleanUp()
+    file_uploaded_edit = []
+    $("#modal-edit-log").modal('hide')
 }
 
 function closeModal() {
@@ -299,6 +549,17 @@ function closeModal() {
         'danger',
         () => {
             clearForm()
+        },
+        () => { }
+    )
+}
+
+function closeModalEdit() {
+    swalConfirm('Konfirmasi', 'Kamu yakin ingin menutup halaman ini? Data yang sudah kamu ubah akan dihapus.',
+        'Ya, yakin',
+        'danger',
+        () => {
+            clearFormEdit()
         },
         () => { }
     )
@@ -379,6 +640,53 @@ function tambahHamaPenyakit() {
     })
 }
 
+function tambahHamaPenyakitEdit() {
+    const idHamaPenyakit = $("#hama_penyakit-edit").val()
+    if (!idHamaPenyakit) {
+        return;
+    }
+
+    showSwalLoader()
+    $.ajax({
+        url: urlInsertHamaPenyakit,
+        type: 'post',
+        dataType: 'json',
+        data: {
+            _token: csrf_token,
+            hama_penyakit: idHamaPenyakit,
+        },
+        success: (result) => {
+            csrf_token = result.csrf_token;
+            $('input[name=_token]').val(csrf_token)
+
+            if (result.status) {
+                $("#list-hama-penyakit-edit").html('')
+                closeSwal()
+                const listHamaPenyakit = result.listHamaPenyakit;
+
+                $.each(listHamaPenyakit, (index, hamaPenyakitTmp) => {
+                    $("#list-hama-penyakit-edit").append(`
+                    <tr>
+                        <td class="text-center align-middle">${hamaPenyakitTmp.jenis_hama_penyakit}</td>
+                        <td class="align-middle">${hamaPenyakitTmp.ket}</td>
+                        <td class="text-center">
+                            <button type="button" onclick="hapusHamaPenyakitTmp(this)" data-id="${hamaPenyakitTmp.id_hama_penyakit_tmp}" class="btn btn-sm btn-icon btn-light-danger"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    `);
+                });
+
+                //clear select
+                $("#hama_penyakit-edit").val('').trigger('change')
+            } else {
+                showSwal('error', result.msg)
+            }
+        }
+    }).fail(() => {
+        swalFailed()
+    })
+}
+
 function hapusHamaPenyakitTmp(el) {
     const btn = $(el)
     const idHamaPenyakitTmp = btn.data('id')
@@ -438,6 +746,43 @@ function submitLog() {
                     showSwal(result.status ? 'success' : 'error', result.msg);
                     if (result.status) {
                         clearForm()
+                        reloadTable()
+                    }
+                }
+            }).fail(() => {
+                swalFailed()
+            })
+        }
+    )
+}
+
+function submitLogEdit() {
+    const form = $("#form-edit-log")
+
+    var warning = '';
+    if (file_uploaded_edit.length > 0) {
+        warning = '<br><span class="text-danger">Terdapat foto yang baru diunggah, foto lama akan dihapus!<span>'
+    }
+
+    swalConfirm(
+        'Konfirmasi',
+        'Apakah kamu sudah yakin data sudah benar?' + warning,
+        'Ya, yakin',
+        'success',
+        () => {
+            showSwalLoader()
+            $.ajax({
+                url: urlSubmitLogEdit,
+                type: 'post',
+                dataType: 'json',
+                data: form.serialize(),
+                success: (result) => {
+                    csrf_token = result.csrf_token;
+                    $('input[name=_token]').val(csrf_token)
+
+                    showSwal(result.status ? 'success' : 'error', result.msg);
+                    if (result.status) {
+                        clearFormEdit()
                         reloadTable()
                     }
                 }
@@ -560,14 +905,12 @@ function showLog(el) {
                     $.each(foto, (index, item) => {
                         img += `<img src="${baseUrlFoto}/${item.filename}" class="rounded img-fluid mh-300px" style="grid-auto-flow: dense">`
                     })
-                    console.log(img)
                     $('#foto-log-show').html(img)
                 } else {
                     $('#foto-log-show').html('')
                 }
 
                 $("#modal-show-log").modal('show')
-                console.log(result)
             } else {
                 showSwal('info', result.msg)
             }
@@ -577,7 +920,7 @@ function showLog(el) {
     })
 }
 
-function editLog(el){
+function editLog(el) {
     const btn = $(el)
 
     const idLog = btn.data('id')
@@ -586,72 +929,136 @@ function editLog(el){
         return
     }
 
+    //hapus log hama penyakit tmp
     showSwalLoader()
     $.ajax({
-        url: urlGetLog,
-        dataType: 'json',
+        url: initEditLog,
         type: 'post',
+        dataType: 'json',
         data: {
             _token: csrf_token,
-            id: idLog
+            id_log: idLog
         },
         success: (result) => {
-            csrf_token = result.csrf_token
+            csrf_token = result.csrf_token;
             $('input[name=_token]').val(csrf_token)
 
-            if (result.status) {
-                closeSwal()
-
-                const log = result.log
-                const hamaPenyakit = result.hamaPenyakit
-                const foto = result.foto
-
-                $("#detil").html(log.deskripsi)
-                $("#tgl_log").val(log.tgl_log)
-                $("#time_start").val(log.time_start)
-                $("#time_end").val(log.time_end)
-                $("#fase").val(log.fase)
-                $("#tahap-show").val(log.ket_tahap)
-                $("#kegiatan-show").val(log.ket_kegiatan)
-                if (log.detil_kegiatan) {
-                    $("#fase-detil-kegiatan-show").show()
-                    $("#fase-detil-kegiatan-show").val(log.ket_detil_kegiatan)
-                } else {
-                    $("#fase-detil-kegiatan-show").hide()
-                    $("#fase-detil-kegiatan-show").val('')
-                }
-
-                var tbody = "";
-                if (hamaPenyakit.length > 0) {
-                    $.each(hamaPenyakit, (index, item) => {
-                        tbody += `<tr>`
-                        tbody += `<td class="text-center">${item.jenis_hama_penyakit}</td>`
-                        tbody += `<td>${item.ket}</td>`
-                        tbody += `<td>${item.deskripsi ? item.deskripsi : ''}</td>`
-                        tbody += `</tr>`
-                    })
-                    $('#list-hama-penyakit-show').html(tbody)
-                } else {
-                    $('#list-hama-penyakit-show').html(`<tr class="text-center"><td colspan="3">Tidak ada data</td></tr>`)
-                }
-
-
-                if (foto.length > 0) {
-                    var img = ""
-                    $.each(foto, (index, item) => {
-                        img += `<img src="${baseUrlFoto}/${item.filename}" class="rounded img-fluid mh-300px" style="grid-auto-flow: dense">`
-                    })
-                    console.log(img)
-                    $('#foto-log-show').html(img)
-                } else {
-                    $('#foto-log-show').html('')
-                }
-
-                $("#modal-show-log").modal('show')
-                console.log(result)
-            } else {
-                showSwal('info', result.msg)
+            if (!result.status) {
+                showSwal('error', result.msg)
+                return
             }
+
+            $.ajax({
+                url: urlGetLog,
+                dataType: 'json',
+                type: 'post',
+                data: {
+                    _token: csrf_token,
+                    id: idLog,
+                    edit: 1
+                },
+                success: (result) => {
+                    csrf_token = result.csrf_token
+                    $('input[name=_token]').val(csrf_token)
+
+                    if (result.status) {
+                        closeSwal()
+
+                        const log = result.log
+                        const hamaPenyakit = result.hamaPenyakit
+                        const foto = result.foto
+
+                        $("#id_logbook").val(idLog);
+
+                        $("#detil-edit").html(log.deskripsi)
+                        datePickerEdit.setDate(log.tgl_log)
+                        startTimePickerEdit.setDate(log.time_start)
+                        endTimePickerEdit.setDate(log.time_end)
+
+                        $("#select-fase-edit").html(result.select2Fase)
+                        $("#fase-edit").val(log.fase)
+                        $("#fase-edit").select2({
+                            dropdownParent: '#select-fase-edit',
+                        })
+
+                        $("#select-tahap-edit").html(result.select2Tahap)
+                        $("#tahap-edit").val(log.tahap)
+                        $("#tahap-edit").select2({
+                            dropdownParent: '#select-tahap-edit',
+                        })
+
+                        $("#select-kegiatan-edit").html(result.select2Kegiatan)
+                        $("#kegiatan-edit").val(log.kegiatan)
+                        $("#kegiatan-edit").select2({
+                            dropdownParent: '#select-kegiatan-edit',
+                        })
+
+                        if (log.detil_kegiatan) {
+                            $("#select-detil-kegiatan-edit").html(result.select2DetilKegiatan)
+                            $("#detil-kegiatan-edit").val(log.detil_kegiatan)
+                            $("#detil-kegiatan-edit").select2({
+                                dropdownParent: '#select-detil-kegiatan-edit',
+                            })
+                        } else {
+                            $("#select-detil-kegiatan-edit").html('')
+                        }
+                        // $("#fase").val(log.fase)
+                        // $("#tahap-show").val(log.ket_tahap)
+                        // $("#kegiatan-show").val(log.ket_kegiatan)
+                        // if (log.detil_kegiatan) {
+                        //     $("#fase-detil-kegiatan-show").show()
+                        //     $("#fase-detil-kegiatan-show").val(log.ket_detil_kegiatan)
+                        // } else {
+                        //     $("#fase-detil-kegiatan-show").hide()
+                        //     $("#fase-detil-kegiatan-show").val('')
+                        // }
+
+                        var tbody = "";
+                        if (hamaPenyakit.length > 0) {
+                            $.each(hamaPenyakit, (index, item) => {
+                                tbody += `
+                                <tr>
+                                    <td class="text-center align-middle">${item.jenis_hama_penyakit}</td>
+                                    <td class="align-middle">${item.ket}</td>
+                                    <td class="text-center">
+                                        <button type="button" onclick="hapusHamaPenyakitTmp(this)" data-id="${item.id_hama_penyakit_tmp}" class="btn btn-sm btn-icon btn-light-danger"><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                `
+
+                            })
+                            $('#list-hama-penyakit-edit').html(tbody)
+                            $("#ada_hama_penyakit-edit").prop('checked', true).trigger('change')
+                        } else {
+                            $("#ada_hama_penyakit-edit").prop('checked', false).trigger('change')
+                            $('#list-hama-penyakit-edit').html(`<tr class="text-center"><td colspan="3">Tidak ada data</td></tr>`)
+                        }
+
+
+                        if (foto.length > 0) {
+                            var img = ""
+                            $.each(foto, (index, item) => {
+                                img += `<img src="${baseUrlFoto}/${item.filename}" class="rounded img-fluid mh-300px" style="grid-auto-flow: dense">`
+                            })
+                            $('#foto-lama').show()
+                            $('#foto-log-show-edit').html(img)
+                        } else {
+                            $('#foto-lama').hide()
+                            $('#foto-log-show-edit').html('')
+                        }
+
+                        const modal = $("#modal-edit-log").modal({
+                            backdrop: 'static',
+                            keyboard: false
+                        })
+                        modal.modal('show')
+                    } else {
+                        showSwal('info', result.msg)
+                    }
+                }
+            }).fail(() => {
+                swalFailed()
+            })
         }
     }).fail(() => {
         swalFailed()

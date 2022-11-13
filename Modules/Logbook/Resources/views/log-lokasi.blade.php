@@ -170,7 +170,7 @@
                                             </td>
                                             <td>
                                                 {{ $item->ket_fase }}<br>{{ $item->ket_tahap }}<br>{{ $item->ket_kegiatan }}
-                                                {{ $item->detil_kegiatan ? '<br>' . $item->ket_detil_kegiatan : '' }}
+                                                {!! $item->detil_kegiatan ? '<br>' . $item->ket_detil_kegiatan : '' !!}
                                             </td>
                                             <td>
                                                 {{ $item->deskripsi }}
@@ -201,7 +201,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title"><span id="mode">Tambah</span> Log Budidaya</h3>
+                    <h3 class="modal-title">Tambah Log Budidaya</h3>
                     <!--begin::Close-->
                     <div type="button" class="btn btn-icon btn-sm btn-active-light-primary ms-2" onclick="closeModal()"
                         aria-label="Close">
@@ -224,7 +224,6 @@
 
                 <form id="form-add-log">
                     @csrf
-                    <input type="hidden" id="id_logbook" name="id_logbook">
                     <div class="modal-body">
                         <div class="form-group mb-10">
                             <label class="form-label">Detil Kegiatan</label>
@@ -364,6 +363,180 @@
                             <!--end::Dropzone-->
                         </div>
                         <!--end::Input group-->
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" onclick="closeModal()">Batal</button>
+                        <button type="button" onclick="submitLog()" class="btn btn-light-success">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg fade" id="modal-edit-log">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Edit Log Budidaya</h3>
+                    <!--begin::Close-->
+                    <div type="button" class="btn btn-icon btn-sm btn-active-light-primary ms-2" onclick="closeModalEdit()"
+                        aria-label="Close">
+                        <!--begin::Svg Icon | path: /var/www/preview.keenthemes.com/kt-products/docs/metronic/html/releases/2022-10-09-043348/core/html/src/media/icons/duotune/general/gen034.svg-->
+                        <span class="svg-icon svg-icon-danger svg-icon-2x"><svg width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect opacity="0.3" x="2" y="2" width="20" height="20"
+                                    rx="5" fill="currentColor" />
+                                <rect x="7" y="15.3137" width="12" height="2" rx="1"
+                                    transform="rotate(-45 7 15.3137)" fill="currentColor" />
+                                <rect x="8.41422" y="7" width="12" height="2" rx="1"
+                                    transform="rotate(45 8.41422 7)" fill="currentColor" />
+                            </svg>
+                        </span>
+                        <!--end::Svg Icon-->
+
+                    </div>
+                    <!--end::Close-->
+                </div>
+
+                <form id="form-edit-log">
+                    @csrf
+                    <input type="hidden" id="id_logbook" name="id_logbook">
+                    <div class="modal-body">
+                        <div class="form-group mb-10">
+                            <label class="form-label">Detil Kegiatan</label>
+                            <textarea name="detil" id="detil-edit" placeholder="Tulis detil kegiatan yang dilakukan"
+                                class="form-control form-control form-control-solid" data-kt-autosize="true"></textarea>
+                        </div>
+                        <div class="form-group mb-10">
+                            <label class="form-label">Tanggal</label>
+                            <input type="text" id="tgl_log-edit" name="tgl_log" class="form-control form-control-solid"
+                                placeholder="Pilih Tanggal">
+                        </div>
+                        <div class="form-group mb-10">
+                            <label class="form-label">Waktu</label>
+                            <div class="row">
+                                <div class="col-md-6" data-kt-calendar="datepicker">
+                                    <input type="text" name="time_start" id="time_start-edit"
+                                        class=" form-control form-control-solid" placeholder="Mulai">
+                                </div>
+                                <div class="col-md-6" data-kt-calendar="datepicker">
+                                    <input type="text" id="time_end-edit" name="time_end"
+                                        class="form-control form-control-solid" placeholder="Selesai">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-10">
+                            <label class="form-label">Fase Budidaya</label>
+                            <div id="select-fase-edit">
+
+                            </div>
+                            <div id="select-tahap-edit">
+
+                            </div>
+                            <div id="select-kegiatan-edit">
+
+                            </div>
+                            <div id="select-detil-kegiatan-edit">
+
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <div class="form-check form-check-custom form-check-warning form-check-solid">
+                                <input class="form-check-input" onchange="toggleAddHamaEdit(this)" id="ada_hama_penyakit-edit"
+                                    name="ada_hama_penyakit" type="checkbox" value="1" />
+                                <label class="form-check-label fs-5" for="ada_hama_penyakit-edit">
+                                    Ditemukan hama/penyakit
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="add-hama-penyakit-edit" style="display: none">
+                            <div class="form-group mb-4 row">
+                                <div class="col-md-9">
+                                    <label class="form-label">Tambah Hama/Penyakit</label>
+                                    <select onchange="getDeskripsiHamaPenyakitEdit(this)" id="hama_penyakit-edit"
+                                        class="form-select form-select-solid" data-control="select2"
+                                        data-dropdown-parent="#add-hama-penyakit-edit"
+                                        data-placeholder="Pilih Jenis Hama/Penyakit">
+                                        <option></option>
+                                        @foreach ($allHamaPenyakit as $item)
+                                            <option data-jenis="{{ $item->jenis }}"
+                                                data-ket-jenis="{{ $item->jenis_hama_penyakit }}"
+                                                data-desc="{{ $item->deskripsi }}" value="{{ $item->id }}">
+                                                {{ $item->ket }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="button" onclick="tambahHamaPenyakitEdit()" class="mt-7 btn btn-info">
+                                        Tambah
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-4" id="desc-edit">
+
+                            </div>
+                            <div class="mt-4">
+                                <table class="table table-row-bordered border table-rounded gx-5">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Jenis</th>
+                                            <th class="text-center">Nama</th>
+                                            <th class="text-center fit-td px-15">Hapus</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="list-hama-penyakit-edit">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="separator mb-4 mt-4"></div>
+                        <!--begin::Input group-->
+                        <div class="mt-4">
+                            <!--begin::Dropzone-->
+                            <div class="dropzone" id="foto-log-edit">
+                                <!--begin::Message-->
+                                <div class="dz-message needsclick">
+                                    <!--begin::Icon-->
+                                    <!--begin::Svg Icon | path: icons/duotune/files/fil010.svg-->
+                                    <span class="svg-icon svg-icon-3hx svg-icon-primary">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path opacity="0.3"
+                                                d="M19 22H5C4.4 22 4 21.6 4 21V3C4 2.4 4.4 2 5 2H14L20 8V21C20 21.6 19.6 22 19 22ZM14.5 12L12.7 9.3C12.3 8.9 11.7 8.9 11.3 9.3L10 12H11.5V17C11.5 17.6 11.4 18 12 18C12.6 18 12.5 17.6 12.5 17V12H14.5Z"
+                                                fill="currentColor" />
+                                            <path
+                                                d="M13 11.5V17.9355C13 18.2742 12.6 19 12 19C11.4 19 11 18.2742 11 17.9355V11.5H13Z"
+                                                fill="currentColor" />
+                                            <path
+                                                d="M8.2575 11.4411C7.82942 11.8015 8.08434 12.5 8.64398 12.5H15.356C15.9157 12.5 16.1706 11.8015 15.7425 11.4411L12.4375 8.65789C12.1875 8.44737 11.8125 8.44737 11.5625 8.65789L8.2575 11.4411Z"
+                                                fill="currentColor" />
+                                            <path d="M15 8H20L14 2V7C14 7.6 14.4 8 15 8Z" fill="currentColor" />
+                                        </svg>
+                                    </span>
+                                    <!--end::Svg Icon-->
+                                    <!--end::Icon-->
+                                    <!--begin::Info-->
+                                    <div class="ms-4">
+                                        <h3 class="dfs-3 fw-bold text-gray-900 mb-1">Tarik dan lepas file disini atau Klik
+                                            untuk mengunggah
+                                            file</h3>
+                                        <span class="fw-semibold fs-4 text-muted">
+                                            Maks. 4 file yang dapat diunggah dengan ukuran maks 5 MB.<br><span class="text-danger">Jika kamu menambahkan foto disini, maka foto lama akan dihapus ketika <b>SIMPAN</b></span>
+                                        </span>
+                                    </div>
+                                    <!--end::Info-->
+                                </div>
+                            </div>
+                            <!--end::Dropzone-->
+                        </div>
+                        <!--end::Input group-->
                         <div class="separator mb-4 mt-4"></div>
                         <div id="foto-lama" style="display: none">
                             <label class="form-label">Foto sebelumnya</label>
@@ -374,8 +547,8 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light" onclick="closeModal()">Batal</button>
-                        <button type="button" onclick="submitLog()" class="btn btn-light-success">Simpan</button>
+                        <button type="button" class="btn btn-light" onclick="closeModalEdit()">Batal</button>
+                        <button type="button" onclick="submitLogEdit()" class="btn btn-light-success">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -488,8 +661,10 @@
         const urlUploadFotoTmp = "{{ route('log.uploadFotoTmp') }}"
         const urlDeleteFotoTmp = "{{ route('log.deleteFotoTmp') }}"
         const urlSubmitLog = "{{ route('log.submitLog') }}"
+        const urlSubmitLogEdit = "{{ route('log.submitLogEdit') }}"
         const urlLoadTable = "{{ route('log.reloadTable') }}"
         const urlGetLog = "{{ route('log.getLogbook') }}"
         const baseUrlFoto = "{{ url('storage/foto-logbook-tmp') }}"
+        const initEditLog = "{{ route('log.initEditLog') }}"
     </script>
 @endsection

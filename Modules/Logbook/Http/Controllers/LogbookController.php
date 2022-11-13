@@ -64,6 +64,7 @@ class LogbookController extends Controller
     {
         try {
             $fase = $request->post('fase');
+            $edit = $request->post('edit');
 
             if (!$fase) {
                 throw new \Exception("Kode fase tidak dapat ditemukan");
@@ -73,7 +74,7 @@ class LogbookController extends Controller
 
             $tahap = $logbookModel->getTahap($fase);
 
-            $html = view('logbook::ajax/select2', ['name' => 'tahap', 'list' => $tahap, 'onchange' => true])->render();
+            $html = view('logbook::ajax/select2' . ($edit ? '-edit' : ''), ['name' => 'tahap', 'list' => $tahap, 'onchange' => true])->render();
 
             echo json_encode(array(
                 'status' => true,
@@ -94,6 +95,7 @@ class LogbookController extends Controller
     {
         try {
             $tahap = $request->post('tahap');
+            $edit = $request->post('edit');
 
             if (!$tahap) {
                 throw new \Exception("Kode tahap tidak dapat ditemukan");
@@ -103,7 +105,7 @@ class LogbookController extends Controller
 
             $kegiatan = $logbookModel->getKegiatan($tahap);
 
-            $html = view('logbook::ajax/select2', ['name' => 'kegiatan', 'list' => $kegiatan, 'onchange' => true])->render();
+            $html = view('logbook::ajax/select2' . ($edit ? '-edit' : ''), ['name' => 'kegiatan', 'list' => $kegiatan, 'onchange' => true])->render();
 
             echo json_encode(array(
                 'status' => true,
@@ -124,6 +126,7 @@ class LogbookController extends Controller
     {
         try {
             $kegiatan = $request->post('kegiatan');
+            $edit = $request->post('edit');
 
             if (!$kegiatan) {
                 throw new \Exception("Kode kegiatan tidak dapat ditemukan");
@@ -135,7 +138,7 @@ class LogbookController extends Controller
 
             $html = "";
             if (sizeof($detilKegiatan) > 0) {
-                $html = view('logbook::ajax/select2', ['name' => 'detil-kegiatan', 'list' => $detilKegiatan, 'onchange' => false])->render();
+                $html = view('logbook::ajax/select2' . ($edit ? '-edit' : ''), ['name' => 'detil-kegiatan', 'list' => $detilKegiatan, 'onchange' => false])->render();
             }
 
             echo json_encode(array(
@@ -213,13 +216,41 @@ class LogbookController extends Controller
         }
     }
 
-    function clearLogTmp(Request $request)
+    function clearLogTmp()
     {
         try {
             $idLokasi = session('id_lokasi');
 
             $logbookModel = new LogbookModel();
             $logbookModel->clearHamaPenyakitTmp($idLokasi);
+            $logbookModel->clearFotoTmp($idLokasi);
+
+            echo json_encode(array(
+                'status' => true,
+                'msg' => 'Ok',
+                'csrf_token' => csrf_token()
+            ));
+        } catch (\Exception $e) {
+            echo json_encode(array(
+                'status' => false,
+                'msg' => $e->getMessage(),
+                'csrf_token' => csrf_token()
+            ));
+        }
+    }
+
+    function initEditLog(Request $request)
+    {
+        try {
+            $idLokasi = session('id_lokasi');
+            $idLog = $request->post('id_log');
+
+            $logbookModel = new LogbookModel();
+            if (!$logbookModel->checkLogbookLokasi($idLog, $idLokasi)) {
+                throw new \Exception("Log kegiatan ini bukan dari lokasi budidaya kamu");
+            }
+
+            $logbookModel->copyHamaPenyakitToTmp($idLog, $idLokasi);
             $logbookModel->clearFotoTmp($idLokasi);
 
             echo json_encode(array(
@@ -431,6 +462,95 @@ class LogbookController extends Controller
         }
     }
 
+    function submitLogEdit(Request $request)
+    {
+        try {
+            $idLog = $request->post('id_logbook');
+            if(!$idLog){
+                throw new \Exception("ID Log tidak dapat ditemukan");
+            }
+
+            $idLokasi = session('id_lokasi');
+            
+            $logbookModel = new LogbookModel();
+            if(!$logbookModel->checkLogbookLokasi($idLog, $idLokasi)){
+                throw new \Exception("Log ini bukan dari lokasi budidaya kamu");
+            }
+
+            $desk_kegiatan = $request->post('detil');
+            $tgl_log = $request->post('tgl_log');
+            $time_start = $request->post('time_start');
+            $time_end = $request->post('time_end');
+            $fase = $request->post('fase');
+            $tahap = $request->post('tahap');
+            $kegiatan = $request->post('kegiatan');
+            $detil_kegiatan = $request->post('detil-kegiatan');
+
+            if (!$desk_kegiatan || !$tgl_log || !$time_start || !$time_end || !$fase || !$tahap || !$kegiatan) {
+                throw new \Exception("Harap lengkapi data dengan benar");
+            }
+
+            //check id fase
+            if (!$logbookModel->getFaseById($fase)) {
+                throw new \Exception("Fase tidak dapat ditemukan. Harap lengkapi data dengan benar");
+            }
+            //check id tahap
+            if (!$logbookModel->getTahapById($tahap, $fase)) {
+                throw new \Exception("Tahap tidak dapat ditemukan. Harap lengkapi data dengan benar");
+            }
+            //check id kegiatan
+            if (!$logbookModel->getKegiatanById($kegiatan, $tahap)) {
+                throw new \Exception("Kegiatan tidak dapat ditemukan. Harap lengkapi data dengan benar");
+            }
+
+            //cek apabila detil kegiatan ada tapi tidak dipilih
+            if (!$detil_kegiatan && sizeof($logbookModel->getDetilKegiatan($kegiatan)) > 0) {
+                throw new \Exception("Detil kegiatan belum dipilih. Harap lengkapi data dengan benar");
+            }
+
+            //jika ada dipilih detil kegiatan, cek id detil kegiatan
+            if ($detil_kegiatan) {
+                if (!$logbookModel->getDetilKegiatanById($detil_kegiatan, $kegiatan)) {
+                    throw new \Exception("Detil kegiatan tidak dapat ditemukan. Harap lengkapi data dengan benar");
+                }
+            }
+
+            $dataUpdate = array(
+                'id_lokasi' => session('id_lokasi'),
+                'deskripsi' => $desk_kegiatan,
+                'tgl_log' => AppHelper::reverse_date_format($tgl_log),
+                'time_start' => $time_start,
+                'time_end' => $time_end,
+                'fase' => $fase,
+                'tahap' => $tahap,
+                'kegiatan' => $kegiatan,
+                'detil_kegiatan' => $detil_kegiatan,
+                'user_insert' => session('username')
+            );
+
+            $status = $logbookModel->updateLogbook($idLog, $dataUpdate);
+            if (!$status) {
+                throw new \Exception("Gagal mengubah log kegiatan. Harap coba lagi");
+            }
+
+            //move data
+            $logbookModel->updateHamaPenyakitLog($idLog, session('id_lokasi'));
+            $logbookModel->updateFotoLog($idLog, session('id_lokasi'));
+
+            echo json_encode(array(
+                'status' => true,
+                'msg' => "Berhasil mengubah Log Kegiatan",
+                'csrf_token' => csrf_token()
+            ));
+        } catch (\Exception $e) {
+            echo json_encode(array(
+                'status' => false,
+                'msg' => $e->getMessage(),
+                'csrf_token' => csrf_token()
+            ));
+        }
+    }
+
     public function reloadTable()
     {
         try {
@@ -471,6 +591,8 @@ class LogbookController extends Controller
                 throw new \Exception("ID Logbook tidak dapat ditemukan");
             }
 
+            $edit = $request->post('edit');
+
             $logbookModel = new LogbookModel();
 
             $log = $logbookModel->getLogById($id);
@@ -480,8 +602,25 @@ class LogbookController extends Controller
 
             //get foto
             $foto = $logbookModel->getFotoByIdLog($id);
+
+            
             //get hama/penyakit
-            $hamaPenyakit = $logbookModel->getHamaPenyakitByIdLog($id);
+            $hamaPenyakit = $edit ? $logbookModel->getHamaPenyakitTmpByIdLokasi(session('id_lokasi')) : $logbookModel->getHamaPenyakitByIdLog($id);
+
+            //ref fase
+            $fase = $logbookModel->getAllFase();
+            $select2Fase = view('logbook::ajax/select2-edit', ['name' => 'fase', 'list' => $fase, 'onchange' => true])->render();
+            //ref tahap
+            $tahap = $logbookModel->getTahap($log->fase);
+            $select2Tahap = view('logbook::ajax/select2-edit', ['name' => 'tahap', 'list' => $tahap, 'onchange' => true])->render();
+            //ref kegiatan
+            $kegiatan = $logbookModel->getKegiatan($log->tahap);
+            $select2Kegiatan = view('logbook::ajax/select2-edit', ['name' => 'kegiatan', 'list' => $kegiatan, 'onchange' => true])->render();
+            //ref detil kegiatan
+            $detil_kegiatan = $log->detil_kegiatan ? $logbookModel->getDetilKegiatan($log->kegiatan) : null;
+            $select2DetilKegiatan = $detil_kegiatan ?
+                view('logbook::ajax/select2-edit', ['name' => 'detil-kegiatan', 'list' => $detil_kegiatan, 'onchange' => false])->render()
+                : '';
 
             echo json_encode(array(
                 'status' => true,
@@ -489,6 +628,10 @@ class LogbookController extends Controller
                 'log' => $log,
                 'foto' => $foto,
                 'hamaPenyakit' => $hamaPenyakit,
+                'select2Fase' => $select2Fase,
+                'select2Tahap' => $select2Tahap,
+                'select2Kegiatan' => $select2Kegiatan,
+                'select2DetilKegiatan' => $select2DetilKegiatan,
                 'csrf_token' => csrf_token()
             ));
             return;
