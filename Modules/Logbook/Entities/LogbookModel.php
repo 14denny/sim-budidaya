@@ -381,4 +381,22 @@ class LogbookModel extends Model
     function checkLogbookLokasi($idLog, $idLokasi){
         return DB::table('logbook')->where('id_lokasi', $idLokasi)->where('id', $idLog)->first();
     }
+
+    function deleteLogbook($idLog){
+        return DB::table('logbook')->where('id', $idLog)->delete();
+    }
+
+    function deleteHamaPenyakit($idLog){
+        return DB::table('hama_penyakit_log')->where('id_logbook', $idLog)->delete();
+    }
+
+    function deleteFoto($idLog){
+        $listFoto = DB::table('foto_log')->where('id_logbook', $idLog)->get();
+        foreach ($listFoto as $foto) {
+            $pathFoto = env('DIR_FOTO_LOG_TMP', '');
+            Storage::delete("$pathFoto/$foto->filename");
+        }
+
+        return DB::table('foto_log')->where('id_logbook', $idLog)->delete();
+    }
 }

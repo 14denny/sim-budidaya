@@ -29,4 +29,5 @@ Route::prefix('log')->name('log.')->middleware(['auth'])->group(function() {
     Route::post('/table', 'LogbookController@reloadTable')->name('reloadTable');
     Route::post('/get', 'LogbookController@getLogbook')->name('getLogbook');
     Route::post('/init-edit-log', 'LogbookController@initEditLog')->name('initEditLog');
+    Route::post('/delete-log', 'LogbookController@deleteLog')->name('deleteLog');
 });

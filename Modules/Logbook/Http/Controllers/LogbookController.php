@@ -643,4 +643,37 @@ class LogbookController extends Controller
             ));
         }
     }
+
+    public function deleteLog(Request $request){
+        try {
+            $idLokasi = session('id_lokasi');
+            $idLog = $request->post('id_log');
+
+            if(!$idLog){
+                throw new \Exception('ID Log tidak dapat ditemukan');
+            }
+
+            $logbookModel = new LogbookModel();
+
+            if(!$logbookModel->checkLogbookLokasi($idLog, $idLokasi)){
+                throw new \Exception('Log kegiatan ini bukan dari lokasi budidaya kamu');
+            }
+
+            $logbookModel->deleteLogbook($idLog);
+            $logbookModel->deleteHamaPenyakit($idLog);
+            $logbookModel->deleteFoto($idLog);
+
+            echo json_encode(array(
+                'status' => true,
+                'msg' => "Berhasil menghapus Log kegiatan budidaya",
+                'csrf_token' => csrf_token()
+            ));
+        } catch (\Exception $e) {
+            echo json_encode(array(
+                'status' => false,
+                'msg' => $e->getMessage(),
+                'csrf_token' => csrf_token()
+            ));
+        }
+    }
 }

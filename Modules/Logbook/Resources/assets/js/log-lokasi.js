@@ -903,7 +903,7 @@ function showLog(el) {
                 if (foto.length > 0) {
                     var img = ""
                     $.each(foto, (index, item) => {
-                        img += `<img src="${baseUrlFoto}/${item.filename}" class="rounded img-fluid mh-300px" style="grid-auto-flow: dense">`
+                        img += `<img src="${baseUrlFoto}/${item.filename}" class="rounded img-fluid mh-300px p-2 mw-50" style="grid-auto-flow: dense">`
                     })
                     $('#foto-log-show').html(img)
                 } else {
@@ -1038,7 +1038,7 @@ function editLog(el) {
                         if (foto.length > 0) {
                             var img = ""
                             $.each(foto, (index, item) => {
-                                img += `<img src="${baseUrlFoto}/${item.filename}" class="rounded img-fluid mh-300px" style="grid-auto-flow: dense">`
+                                img += `<img src="${baseUrlFoto}/${item.filename}" class="rounded img-fluid mh-300px p-2 mw-50" style="grid-auto-flow: dense">`
                             })
                             $('#foto-lama').show()
                             $('#foto-log-show-edit').html(img)
@@ -1063,4 +1063,37 @@ function editLog(el) {
     }).fail(() => {
         swalFailed()
     })
+}
+
+function deleteLog(el) {
+    const btn = $(el)
+
+    swalConfirm(
+        'Konfirmasi',
+        'Kamu yakin ingin menghapus log kegiatan ini? Data yang sudah dihapus tidak dapat dikembalikan lagi',
+        'Ya, hapus',
+        'danger',
+        () => {
+            showSwalLoader();
+            $.ajax({
+                url: urlDeleteLog,
+                dataType: 'json',
+                type: 'post',
+                data: {
+                    _token: csrf_token,
+                    id_log: btn.data('id')
+                },
+                success: (result) => {
+                    csrf_token = result.csrf_token
+                    $('input[name=_token]').val(csrf_token)
+
+                    showSwal(result.status ? 'success' : 'error', result.msg);
+                    reloadTable()
+
+                }
+            }).fail(() => {
+                swalFailed()
+            })
+        }
+    )
 }

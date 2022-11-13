@@ -540,7 +540,7 @@
                         <div class="separator mb-4 mt-4"></div>
                         <div id="foto-lama" style="display: none">
                             <label class="form-label">Foto sebelumnya</label>
-                            <div id="foto-log-show-edit" style="display: flex; flex: 2; gap: 1rem; flex-wrap: wrap;">
+                            <div id="foto-log-show-edit" style="display: flex; flex: 2; flex-wrap: wrap;">
                             </div>
                         </div>
 
@@ -636,7 +636,7 @@
 
                     <div class="separator mb-4 mt-4"></div>
 
-                    <div id="foto-log-show" style="display: flex; flex: 2; gap: 1rem; flex-wrap: wrap;">
+                    <div id="foto-log-show" style="display: flex; flex: 2; flex-wrap: wrap;">
                     </div>
 
                 </div>
@@ -666,5 +666,6 @@
         const urlGetLog = "{{ route('log.getLogbook') }}"
         const baseUrlFoto = "{{ url('storage/foto-logbook-tmp') }}"
         const initEditLog = "{{ route('log.initEditLog') }}"
+        const urlDeleteLog = "{{ route('log.deleteLog') }}"
     </script>
 @endsection
