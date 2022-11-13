@@ -22,4 +22,8 @@ Route::prefix('log')->name('log.')->middleware(['auth'])->group(function() {
     Route::post('/add-hama-penyakit-log', 'LogbookController@addHamaPenyakitLog')->name('insertHamaPenyakit');
     Route::post('/clear-log-tmp', 'LogbookController@clearLogTmp')->name('clearLogTmp');
     Route::post('/delete-hama-penyakit-log', 'LogbookController@deleteHamaPenyakitTmp')->name('deleteHamaPenyakitTmp');
+    Route::post('/upload-foto-log-tmp', 'LogbookController@uploadFotoTmp')->name('uploadFotoTmp');
+    Route::post('/delete-foto-log-tmp', 'LogbookController@deleteFotoTmp')->name('deleteFotoTmp');
+    Route::post('/submit-log', 'LogbookController@submitLog')->name('submitLog');
+    Route::post('/table', 'LogbookController@reloadTable')->name('reloadTable');
 });

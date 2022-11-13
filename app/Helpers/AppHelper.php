@@ -120,4 +120,9 @@ class AppHelper
             return -1;
         }
     }
+
+    public static function reverse_date_format(string $date)
+    {
+        return join('-', array_reverse(explode('-', $date)));
+    }
 }

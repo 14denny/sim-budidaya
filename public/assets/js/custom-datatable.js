@@ -1,4 +1,11 @@
 "use strict";
+
+jQuery.fn.dataTable.Api.register('processing()', function (show) {
+    return this.iterator('table', function (ctx) {
+        ctx.oApi._fnProcessingDisplay(ctx, show);
+    });
+});
+
 var KTDataTable = function () {
     // Shared variables
     var table;
@@ -104,6 +111,9 @@ var KTDataTable = function () {
         addRow: function (data) {
             datatable.row.add(data).draw()
         },
+        addRows: function (data) {
+            datatable.rows.add(data).draw()
+        },
         deleteRow: function (selector) {
             // delete row
             datatable.row($(selector)).remove()
@@ -121,6 +131,16 @@ var KTDataTable = function () {
         },
         reloadAjax: function () {
             datatable.ajax.reload(null, false)
+        },
+        clear:function(){
+            datatable.clear().draw()
+        },
+        showProcessing: function(){
+            datatable.processing(true)
+        },
+        hideProcessing: function(){
+            datatable.processing(false)
         }
     }
 }();
+

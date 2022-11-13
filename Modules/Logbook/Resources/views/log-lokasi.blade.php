@@ -17,6 +17,13 @@
         html:not([data-theme=light]) .blue-bg {
             background-color: #116897;
         }
+
+        .cut-text {
+            max-width: 400px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
     </style>
 @endsection
 
@@ -53,49 +60,135 @@
                 <div class="card-header">
                     <h5 class="card-title text-center fs-4 fw-bold">Daftar Log Kegiatan Budidaya</h5>
                     <div class="card-toolbar">
-                        <button type="button" class="btn btn-sm btn-light-primary"
-                            onclick="openModal()">
+                        <button type="button" class="btn btn-sm btn-light-primary" onclick="openModal()">
                             Tambah Log
                         </button>
                     </div>
                 </div>
                 <div class="card-body d-flex flex-column pt-0">
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
-                    <p>Lorem ipsum.................</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center position-relative my-1">
+                                <!--begin::Search-->
+                                <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
+                                <span class="svg-icon svg-icon-1 position-absolute ms-6">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2"
+                                            rx="1" transform="rotate(45 17.0365 15.1223)" fill="currentColor" />
+                                        <path
+                                            d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z"
+                                            fill="currentColor" />
+                                    </svg>
+                                </span>
+                                <!--end::Svg Icon-->
+                                <input type="text" data-table-filter="search"
+                                    class="form-control form-control-solid w-250px ps-14 border border-gray-300"
+                                    placeholder="Search " />
+                                <!--end::Search-->
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex flex-end gap-5">
+                                <!--begin::Export dropdown-->
+                                <button type="button" class="btn btn-light-primary" data-kt-menu-trigger="click"
+                                    data-kt-menu-placement="bottom-end">
+                                    <span class="svg-icon svg-icon-2">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <rect opacity="0.3" width="12" height="2" rx="1"
+                                                transform="matrix(0 -1 -1 0 12.75 19.75)" fill="currentColor"></rect>
+                                            <path
+                                                d="M12.0573 17.8813L13.5203 16.1256C13.9121 15.6554 14.6232 15.6232 15.056 16.056C15.4457 16.4457 15.4641 17.0716 15.0979 17.4836L12.4974 20.4092C12.0996 20.8567 11.4004 20.8567 11.0026 20.4092L8.40206 17.4836C8.0359 17.0716 8.0543 16.4457 8.44401 16.056C8.87683 15.6232 9.58785 15.6554 9.9797 16.1256L11.4427 17.8813C11.6026 18.0732 11.8974 18.0732 12.0573 17.8813Z"
+                                                fill="currentColor"></path>
+                                            <path opacity="0.3"
+                                                d="M18.75 15.75H17.75C17.1977 15.75 16.75 15.3023 16.75 14.75C16.75 14.1977 17.1977 13.75 17.75 13.75C18.3023 13.75 18.75 13.3023 18.75 12.75V5.75C18.75 5.19771 18.3023 4.75 17.75 4.75L5.75 4.75C5.19772 4.75 4.75 5.19771 4.75 5.75V12.75C4.75 13.3023 5.19771 13.75 5.75 13.75C6.30229 13.75 6.75 14.1977 6.75 14.75C6.75 15.3023 6.30229 15.75 5.75 15.75H4.75C3.64543 15.75 2.75 14.8546 2.75 13.75V4.75C2.75 3.64543 3.64543 2.75 4.75 2.75L18.75 2.75C19.8546 2.75 20.75 3.64543 20.75 4.75V13.75C20.75 14.8546 19.8546 15.75 18.75 15.75Z"
+                                                fill="currentColor"></path>
+                                        </svg>
+                                    </span>
+                                    Export Data
+                                </button>
+                                <!--begin::Menu-->
+                                <div id="datatable-export"
+                                    class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-200px py-4"
+                                    data-kt-menu="true">
+                                    <!--begin::Menu item-->
+                                    <div class="menu-item px-3">
+                                        <a href="#" class="menu-link px-3" data-kt-export="copy">
+                                            Copy to clipboard
+                                        </a>
+                                    </div>
+                                    <!--end::Menu item-->
+                                    <!--begin::Menu item-->
+                                    <div class="menu-item px-3">
+                                        <a href="#" class="menu-link px-3" data-kt-export="excel">
+                                            Export as Excel
+                                        </a>
+                                    </div>
+                                    <!--end::Menu item-->
+                                    <!--begin::Menu item-->
+                                    <div class="menu-item px-3">
+                                        <a href="#" class="menu-link px-3" data-kt-export="csv">
+                                            Export as CSV
+                                        </a>
+                                    </div>
+                                    <!--end::Menu item-->
+                                    <!--begin::Menu item-->
+                                    <div class="menu-item px-3">
+                                        <a href="#" class="menu-link px-3" data-kt-export="pdf">
+                                            Export as PDF
+                                        </a>
+                                    </div>
+                                    <!--end::Menu item-->
+                                </div>
+                                <!--end::Menu-->
+                                <!--end::Export dropdown-->
+                                <div id="datatable-export-btn" class="d-none"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mt-5">
+                            <table id="table-log"
+                                class="table table-hover border table-row-bordered table-rounded gy-7 gx-5 mx-5 my-7">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Waktu</th>
+                                        <th>Fase</th>
+                                        <th>Detil Kegiatan</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($logbook as $item)
+                                        <tr>
+                                            <td data-id="{{$item->id}}">{{ $loop->index + 1 }}</td>
+                                            <td>
+                                                {{ $item->tgl_log }}<br>
+                                                {{ $item->time_start }} - {{ $item->time_end }}
+                                            </td>
+                                            <td>
+                                                {{ $item->ket_fase }}<br>{{ $item->ket_tahap }}<br>{{ $item->ket_kegiatan }}
+                                                {{ $item->detil_kegiatan ? '<br>' . $item->ket_detil_kegiatan : '' }}
+                                            </td>
+                                            <td>
+                                                {{ $item->deskripsi }}
+                                            </td>
+                                            <td>
+                                                <button onclick="showLog(this)" data-id="{{$item->id}}" class="btn btn-sm btn-icon btn-secondary"><i
+                                                        class="fa fa-eye"></i></button>
+                                                <button onclick="editLog(this)" data-id="{{$item->id}}" class="btn btn-sm btn-icon btn-info"><i
+                                                        class="fa fa-pen"></i></button>
+                                                <button onclick="deleteLog(this)" data-id="{{$item->id}}" class="btn btn-sm btn-icon btn-danger"><i
+                                                        class="fa fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -188,8 +281,8 @@
                             <div class="form-group mb-4 row">
                                 <div class="col-md-9">
                                     <label class="form-label">Tambah Hama/Penyakit</label>
-                                    <select onchange="getDeskripsiHamaPenyakit(this)"
-                                        id="hama_penyakit" class="form-select form-select-solid" data-control="select2"
+                                    <select onchange="getDeskripsiHamaPenyakit(this)" id="hama_penyakit"
+                                        class="form-select form-select-solid" data-control="select2"
                                         data-dropdown-parent="#add-hama-penyakit"
                                         data-placeholder="Pilih Jenis Hama/Penyakit">
                                         <option></option>
@@ -225,11 +318,54 @@
                                 </table>
                             </div>
                         </div>
+
+                        <div class="separator mb-4 mt-4"></div>
+                        <!--begin::Input group-->
+                        <div class="mt-4">
+                            <!--begin::Dropzone-->
+                            <div class="dropzone" id="foto-log">
+                                <!--begin::Message-->
+                                <div class="dz-message needsclick">
+                                    <!--begin::Icon-->
+                                    <!--begin::Svg Icon | path: icons/duotune/files/fil010.svg-->
+                                    <span class="svg-icon svg-icon-3hx svg-icon-primary">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path opacity="0.3"
+                                                d="M19 22H5C4.4 22 4 21.6 4 21V3C4 2.4 4.4 2 5 2H14L20 8V21C20 21.6 19.6 22 19 22ZM14.5 12L12.7 9.3C12.3 8.9 11.7 8.9 11.3 9.3L10 12H11.5V17C11.5 17.6 11.4 18 12 18C12.6 18 12.5 17.6 12.5 17V12H14.5Z"
+                                                fill="currentColor" />
+                                            <path
+                                                d="M13 11.5V17.9355C13 18.2742 12.6 19 12 19C11.4 19 11 18.2742 11 17.9355V11.5H13Z"
+                                                fill="currentColor" />
+                                            <path
+                                                d="M8.2575 11.4411C7.82942 11.8015 8.08434 12.5 8.64398 12.5H15.356C15.9157 12.5 16.1706 11.8015 15.7425 11.4411L12.4375 8.65789C12.1875 8.44737 11.8125 8.44737 11.5625 8.65789L8.2575 11.4411Z"
+                                                fill="currentColor" />
+                                            <path d="M15 8H20L14 2V7C14 7.6 14.4 8 15 8Z" fill="currentColor" />
+                                        </svg>
+                                    </span>
+                                    <!--end::Svg Icon-->
+                                    <!--end::Icon-->
+                                    <!--begin::Info-->
+                                    <div class="ms-4">
+                                        <h3 class="dfs-3 fw-bold text-gray-900 mb-1">Tarik dan lepas file disini atau Klik
+                                            untuk mengunggah
+                                            file</h3>
+                                        <span class="fw-semibold fs-4 text-muted">
+                                            Maks. 4 file yang dapat diunggah dengan ukuran maks 5 MB
+                                        </span>
+                                    </div>
+                                    <!--end::Info-->
+                                </div>
+                            </div>
+                            <!--end::Dropzone-->
+                        </div>
+                        <!--end::Input group-->
+
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light" onclick="closeModal()">Batal</button>
-                        <button type="button" class="btn btn-light-success">Simpan</button>
+                        <button type="button" onclick="submitLog()" class="btn btn-light-success">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -246,6 +382,10 @@
         const urlInsertHamaPenyakit = "{{ route('log.insertHamaPenyakit') }}"
         const urlClearLogTmp = "{{ route('log.clearLogTmp') }}"
         const urlDeleteHamaPenyakit = "{{ route('log.deleteHamaPenyakitTmp') }}"
-        const idLokasi = "{{$lokasi->id}}"
+        const idLokasi = "{{ $lokasi->id }}"
+        const urlUploadFotoTmp = "{{ route('log.uploadFotoTmp') }}"
+        const urlDeleteFotoTmp = "{{ route('log.deleteFotoTmp') }}"
+        const urlSubmitLog = "{{ route('log.submitLog') }}"
+        const urlLoadTable = "{{ route('log.reloadTable') }}"
     </script>
 @endsection
