@@ -87,17 +87,12 @@ KTUtil.onDOMContentLoaded((function () {
             }
         },
         success: function (file, response) {
-            // console.log(response)
             const res = JSON.parse(response)
             if (res.status) {
                 file_uploaded.push({
                     name: file.name,
                     hashName: res.filename
                 });
-                // $("#short_url_readonly").val(res.url)
-                // $("#short_url").val(res.url)
-
-                // nextBtn.disabled = false;
             } else {
                 showSwal('error', res.msg)
             }
@@ -131,7 +126,6 @@ KTUtil.onDOMContentLoaded((function () {
             // }
         ],
         createdRow: function (row, data, dataIndex, cells) {
-            console.log($(cells[0]).data('id'))
             $(row).addClass("log-" + $(cells[0]).data('id'));
         }
     })
@@ -468,7 +462,6 @@ function reloadTable() {
             tableLog.hideProcessing()
             csrf_token = result.csrf_token
             $('input[name=_token]').val(csrf_token)
-            console.log(result.datas)
 
             if (result.status) {
                 const datas = result.datas;
@@ -494,9 +487,6 @@ function reloadTable() {
 
                     tableLog.addRow(tr)
                 })
-
-                // console.log(rows)
-                // tableLog.addRows(rows)
             } else {
                 showSwal('error', result.msg)
             }

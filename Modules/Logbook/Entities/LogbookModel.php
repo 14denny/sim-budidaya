@@ -242,4 +242,30 @@ class LogbookModel extends Model
 
         return $listLog;
     }
+
+    public function getLogById($id)
+    {
+        $log = DB::table('logbook')
+            ->select([
+                'logbook.*',
+                DB::raw('(SELECT ket from fase where fase.id=logbook.fase) as ket_fase'),
+                DB::raw('(SELECT ket from tahap where tahap.id=logbook.tahap) as ket_tahap'),
+                DB::raw('(SELECT ket from kegiatan where kegiatan.id=logbook.kegiatan) as ket_kegiatan'),
+                DB::raw('(SELECT ket from detil_kegiatan where detil_kegiatan.id=logbook.detil_kegiatan) as ket_detil_kegiatan')
+            ])
+            ->where('id', $id)
+            ->first();
+
+        $log->tgl_log = AppHelper::reverse_date_format($log->tgl_log);
+
+        return $log;
+    }
+
+    function getFotoByIdLog($idLog){
+        return DB::table('foto_log')->where('id_logbook', $idLog)->get();
+    }
+
+    function getHamaPenyakitByIdLog($idLog){
+        return DB::table('hama_penyakit_log')->where('id_logbook', $idLog)->get();
+    }
 }

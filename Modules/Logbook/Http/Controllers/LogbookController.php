@@ -55,7 +55,7 @@ class LogbookController extends Controller
             'lokasi' => $lokasi,
             'allFase' => $logbookModel->getAllFase(),
             'allHamaPenyakit' => $logbookModel->getAllHamaPenyakit(),
-            'logbook'=>$logbookModel->getListLog($id)
+            'logbook' => $logbookModel->getListLog($id)
         );
         return view('logbook::log-lokasi', $dataView);
     }
@@ -316,10 +316,11 @@ class LogbookController extends Controller
         }
     }
 
-    public function deleteFotoTmp(Request $request){
+    public function deleteFotoTmp(Request $request)
+    {
         try {
             $filename = $request->post('filename');
-            if(!$filename){
+            if (!$filename) {
                 throw new \Exception("Nama file tidak ditemukan");
             }
 
@@ -327,16 +328,16 @@ class LogbookController extends Controller
 
             $idLokasi = session('id_lokasi');
             //checkfile
-            if(!$logbookModel->checkFotoTmp($idLokasi, $filename)){
+            if (!$logbookModel->checkFotoTmp($idLokasi, $filename)) {
                 throw new \Exception("File tidak ditemukan");
             }
 
             $logbookModel->deleteFotoTmp($idLokasi, $filename);
 
             $dirpath = env('DIR_FOTO_LOG_TMP');
-            
+
             Storage::delete("$dirpath/$filename");
-            
+
             echo json_encode(array(
                 'status' => true,
                 'msg' => 'Ok',
@@ -352,7 +353,8 @@ class LogbookController extends Controller
         }
     }
 
-    function submitLog(Request $request){
+    function submitLog(Request $request)
+    {
         try {
             $desk_kegiatan = $request->post('detil');
             $tgl_log = $request->post('tgl_log');
@@ -363,7 +365,7 @@ class LogbookController extends Controller
             $kegiatan = $request->post('kegiatan');
             $detil_kegiatan = $request->post('detil-kegiatan');
 
-            if(!$desk_kegiatan || !$tgl_log || !$time_start || !$time_end || !$fase || !$tahap || !$kegiatan){
+            if (!$desk_kegiatan || !$tgl_log || !$time_start || !$time_end || !$fase || !$tahap || !$kegiatan) {
                 throw new \Exception("Harap lengkapi data dengan benar");
             }
 
@@ -373,41 +375,41 @@ class LogbookController extends Controller
                 throw new \Exception("Fase tidak dapat ditemukan. Harap lengkapi data dengan benar");
             }
             //check id tahap
-            if (!$logbookModel->getTahapById($tahap, $fase)){
+            if (!$logbookModel->getTahapById($tahap, $fase)) {
                 throw new \Exception("Tahap tidak dapat ditemukan. Harap lengkapi data dengan benar");
             }
             //check id kegiatan
-            if (!$logbookModel->getKegiatanById($kegiatan, $tahap)){
+            if (!$logbookModel->getKegiatanById($kegiatan, $tahap)) {
                 throw new \Exception("Kegiatan tidak dapat ditemukan. Harap lengkapi data dengan benar");
             }
 
             //cek apabila detil kegiatan ada tapi tidak dipilih
-            if(!$detil_kegiatan && sizeof($logbookModel->getDetilKegiatan($kegiatan))>0){
+            if (!$detil_kegiatan && sizeof($logbookModel->getDetilKegiatan($kegiatan)) > 0) {
                 throw new \Exception("Detil kegiatan belum dipilih. Harap lengkapi data dengan benar");
             }
 
             //jika ada dipilih detil kegiatan, cek id detil kegiatan
-            if($detil_kegiatan){
-                if(!$logbookModel->getDetilKegiatanById($detil_kegiatan, $kegiatan)){
+            if ($detil_kegiatan) {
+                if (!$logbookModel->getDetilKegiatanById($detil_kegiatan, $kegiatan)) {
                     throw new \Exception("Detil kegiatan tidak dapat ditemukan. Harap lengkapi data dengan benar");
                 }
             }
 
             $dataInsert = array(
-                'id_lokasi'=> session('id_lokasi'),
-                'deskripsi'=>$desk_kegiatan,
-                'tgl_log'=>AppHelper::reverse_date_format($tgl_log),
-                'time_start'=>$time_start,
-                'time_end'=>$time_end,
-                'fase'=>$fase,
-                'tahap'=>$tahap,
-                'kegiatan'=> $kegiatan,
-                'detil_kegiatan'=> $detil_kegiatan,
-                'user_insert'=>session('username')
+                'id_lokasi' => session('id_lokasi'),
+                'deskripsi' => $desk_kegiatan,
+                'tgl_log' => AppHelper::reverse_date_format($tgl_log),
+                'time_start' => $time_start,
+                'time_end' => $time_end,
+                'fase' => $fase,
+                'tahap' => $tahap,
+                'kegiatan' => $kegiatan,
+                'detil_kegiatan' => $detil_kegiatan,
+                'user_insert' => session('username')
             );
 
             $logbookId = $logbookModel->insertLogbook($dataInsert);
-            if(!$logbookId){
+            if (!$logbookId) {
                 throw new \Exception("Gagal menambahkan log kegiatan baru. Harap coba lagi");
             }
 
@@ -429,7 +431,8 @@ class LogbookController extends Controller
         }
     }
 
-    public function reloadTable(){
+    public function reloadTable()
+    {
         try {
             $lokasiModel = new LokasiModel();
 
@@ -448,9 +451,48 @@ class LogbookController extends Controller
             echo json_encode(array(
                 'status' => true,
                 'msg' => 'Ok',
-                'datas'=> $logbookModel->getListLog($idLokasi),
+                'datas' => $logbookModel->getListLog($idLokasi),
                 'csrf_token' => csrf_token()
             ));
+        } catch (\Exception $e) {
+            echo json_encode(array(
+                'status' => false,
+                'msg' => $e->getMessage(),
+                'csrf_token' => csrf_token()
+            ));
+        }
+    }
+
+    public function getLogbook($id)
+    {
+        try {
+            if (!$id) {
+                throw new \Exception("ID Logbook tidak dapat ditemukan");
+            }
+
+            $npm = session('username');
+
+            $logbookModel = new LogbookModel();
+
+            $log = $logbookModel->getLogById($id);
+            if (!$log) {
+                throw new \Exception("Log kegiatan tidak dapat ditemukan");
+            }
+
+            //get foto
+            $foto = $logbookModel->getFotoByIdLog($id);
+            //get hama/penyakit
+            $hamaPenyakit = $logbookModel->getHamaPenyakitByIdLog($id);
+
+            echo json_encode(array(
+                'status' => true,
+                'msg' => 'Ok',
+                'log' => $log,
+                'foto' => $foto,
+                'hamaPenyakit' => $hamaPenyakit,
+                'csrf_token' => csrf_token()
+            ));
+            return;
         } catch (\Exception $e) {
             echo json_encode(array(
                 'status' => false,

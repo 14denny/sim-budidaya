@@ -26,4 +26,5 @@ Route::prefix('log')->name('log.')->middleware(['auth'])->group(function() {
     Route::post('/delete-foto-log-tmp', 'LogbookController@deleteFotoTmp')->name('deleteFotoTmp');
     Route::post('/submit-log', 'LogbookController@submitLog')->name('submitLog');
     Route::post('/table', 'LogbookController@reloadTable')->name('reloadTable');
+    Route::get('/get/{id}', 'LogbookController@getLogbook')->name('getLogbook');
 });
