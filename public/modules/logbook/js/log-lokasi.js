@@ -87,17 +87,12 @@ KTUtil.onDOMContentLoaded((function () {
             }
         },
         success: function (file, response) {
-            // console.log(response)
             const res = JSON.parse(response)
             if (res.status) {
                 file_uploaded.push({
                     name: file.name,
                     hashName: res.filename
                 });
-                // $("#short_url_readonly").val(res.url)
-                // $("#short_url").val(res.url)
-
-                // nextBtn.disabled = false;
             } else {
                 showSwal('error', res.msg)
             }
@@ -131,7 +126,6 @@ KTUtil.onDOMContentLoaded((function () {
             // }
         ],
         createdRow: function (row, data, dataIndex, cells) {
-            console.log($(cells[0]).data('id'))
             $(row).addClass("log-" + $(cells[0]).data('id'));
         }
     })
@@ -468,7 +462,6 @@ function reloadTable() {
             tableLog.hideProcessing()
             csrf_token = result.csrf_token
             $('input[name=_token]').val(csrf_token)
-            console.log(result.datas)
 
             if (result.status) {
                 const datas = result.datas;
@@ -494,15 +487,93 @@ function reloadTable() {
 
                     tableLog.addRow(tr)
                 })
-
-                // console.log(rows)
-                // tableLog.addRows(rows)
             } else {
                 showSwal('error', result.msg)
             }
         }
     }).fail(() => {
         tableLog.hideProcessing()
+        swalFailed()
+    })
+}
+
+function showLog(el) {
+    const btn = $(el)
+
+    const idLog = btn.data('id')
+
+    if (!idLog) {
+        return
+    }
+
+    showSwalLoader()
+    $.ajax({
+        url: urlGetLog,
+        dataType: 'json',
+        type: 'post',
+        data: {
+            _token: csrf_token,
+            id: idLog
+        },
+        success: (result) => {
+            csrf_token = result.csrf_token
+            $('input[name=_token]').val(csrf_token)
+
+            if (result.status) {
+                closeSwal()
+
+                const log = result.log
+                const hamaPenyakit = result.hamaPenyakit
+                const foto = result.foto
+
+                $("#detil-kegiatan-show").html(log.deskripsi)
+                $("#tgl-log-show").val(log.tgl_log)
+                $("#time-start-show").val(log.time_start)
+                $("#time-end-show").val(log.time_end)
+                $("#fase-show").val(log.ket_fase)
+                $("#tahap-show").val(log.ket_tahap)
+                $("#kegiatan-show").val(log.ket_kegiatan)
+                if (log.detil_kegiatan) {
+                    $("#fase-detil-kegiatan-show").show()
+                    $("#fase-detil-kegiatan-show").val(log.ket_detil_kegiatan)
+                } else {
+                    $("#fase-detil-kegiatan-show").hide()
+                    $("#fase-detil-kegiatan-show").val('')
+                }
+
+                var tbody = "";
+                if (hamaPenyakit.length > 0) {
+                    $.each(hamaPenyakit, (index, item) => {
+                        tbody += `<tr>`
+                        tbody += `<td class="text-center">${item.jenis_hama_penyakit}</td>`
+                        tbody += `<td>${item.ket}</td>`
+                        tbody += `<td>${item.deskripsi ? item.deskripsi : ''}</td>`
+                        tbody += `</tr>`
+                    })
+                    $('#list-hama-penyakit-show').html(tbody)
+                } else {
+                    $('#list-hama-penyakit-show').html(`<tr class="text-center"><td colspan="3">Tidak ada data</td></tr>`)
+                }
+
+
+                if (foto.length > 0) {
+                    var img = ""
+                    $.each(foto, (index, item) => {
+                        img += `<img src="${baseUrlFoto}/${item.filename}" class="rounded img-fluid mh-300px" style="grid-auto-flow: dense">`
+                    })
+                    console.log(img)
+                    $('#foto-log-show').html(img)
+                } else {
+                    $('#foto-log-show').html('')
+                }
+
+                $("#modal-show-log").modal('show')
+                console.log(result)
+            } else {
+                showSwal('info', result.msg)
+            }
+        }
+    }).fail(() => {
         swalFailed()
     })
 }

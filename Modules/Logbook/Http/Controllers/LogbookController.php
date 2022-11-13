@@ -463,14 +463,13 @@ class LogbookController extends Controller
         }
     }
 
-    public function getLogbook($id)
+    public function getLogbook(Request $request)
     {
         try {
+            $id = $request->post('id');
             if (!$id) {
                 throw new \Exception("ID Logbook tidak dapat ditemukan");
             }
-
-            $npm = session('username');
 
             $logbookModel = new LogbookModel();
 

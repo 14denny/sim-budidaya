@@ -266,6 +266,12 @@ class LogbookModel extends Model
     }
 
     function getHamaPenyakitByIdLog($idLog){
-        return DB::table('hama_penyakit_log')->where('id_logbook', $idLog)->get();
+        return DB::table('hama_penyakit_log')
+        ->select([
+            'hama_penyakit.*',
+            DB::raw("(SELECT ket from jenis_hama_penyakit j where j.id=hama_penyakit.jenis) as jenis_hama_penyakit")
+        ])
+        ->join('hama_penyakit', 'hama_penyakit.id','=', 'hama_penyakit_log.id_hama_penyakit')
+        ->where('hama_penyakit_log.id_logbook', $idLog)->get();
     }
 }

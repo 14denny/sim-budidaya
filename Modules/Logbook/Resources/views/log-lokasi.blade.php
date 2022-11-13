@@ -153,17 +153,17 @@
                                 class="table table-hover border table-row-bordered table-rounded gy-7 gx-5 mx-5 my-7">
                                 <thead>
                                     <tr>
-                                        <th>No</th>
-                                        <th>Waktu</th>
-                                        <th>Fase</th>
-                                        <th>Detil Kegiatan</th>
-                                        <th>Aksi</th>
+                                        <th class="text-center">No</th>
+                                        <th class="text-center">Waktu</th>
+                                        <th class="text-center">Fase</th>
+                                        <th class="text-center">Detil Kegiatan</th>
+                                        <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($logbook as $item)
                                         <tr>
-                                            <td data-id="{{$item->id}}">{{ $loop->index + 1 }}</td>
+                                            <td data-id="{{ $item->id }}">{{ $loop->index + 1 }}</td>
                                             <td>
                                                 {{ $item->tgl_log }}<br>
                                                 {{ $item->time_start }} - {{ $item->time_end }}
@@ -176,11 +176,14 @@
                                                 {{ $item->deskripsi }}
                                             </td>
                                             <td>
-                                                <button onclick="showLog(this)" data-id="{{$item->id}}" class="btn btn-sm btn-icon btn-secondary"><i
+                                                <button onclick="showLog(this)" data-id="{{ $item->id }}"
+                                                    class="btn btn-sm btn-icon btn-secondary"><i
                                                         class="fa fa-eye"></i></button>
-                                                <button onclick="editLog(this)" data-id="{{$item->id}}" class="btn btn-sm btn-icon btn-info"><i
+                                                <button onclick="editLog(this)" data-id="{{ $item->id }}"
+                                                    class="btn btn-sm btn-icon btn-info"><i
                                                         class="fa fa-pen"></i></button>
-                                                <button onclick="deleteLog(this)" data-id="{{$item->id}}" class="btn btn-sm btn-icon btn-danger"><i
+                                                <button onclick="deleteLog(this)" data-id="{{ $item->id }}"
+                                                    class="btn btn-sm btn-icon btn-danger"><i
                                                         class="fa fa-trash"></i></button>
                                             </td>
                                         </tr>
@@ -198,7 +201,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title">Tambah Log Budidaya</h3>
+                    <h3 class="modal-title"><span id="mode">Tambah</span> Log Budidaya</h3>
                     <!--begin::Close-->
                     <div type="button" class="btn btn-icon btn-sm btn-active-light-primary ms-2" onclick="closeModal()"
                         aria-label="Close">
@@ -221,10 +224,11 @@
 
                 <form id="form-add-log">
                     @csrf
+                    <input type="hidden" id="id_logbook" name="id_logbook">
                     <div class="modal-body">
                         <div class="form-group mb-10">
                             <label class="form-label">Detil Kegiatan</label>
-                            <textarea name="detil" placeholder="Tulis detil kegiatan yang dilakukan"
+                            <textarea name="detil" id="detil" placeholder="Tulis detil kegiatan yang dilakukan"
                                 class="form-control form-control form-control-solid" data-kt-autosize="true"></textarea>
                         </div>
                         <div class="form-group mb-10">
@@ -360,6 +364,12 @@
                             <!--end::Dropzone-->
                         </div>
                         <!--end::Input group-->
+                        <div class="separator mb-4 mt-4"></div>
+                        <div id="foto-lama" style="display: none">
+                            <label class="form-label">Foto sebelumnya</label>
+                            <div id="foto-log-show-edit" style="display: flex; flex: 2; gap: 1rem; flex-wrap: wrap;">
+                            </div>
+                        </div>
 
                     </div>
 
@@ -368,6 +378,98 @@
                         <button type="button" onclick="submitLog()" class="btn btn-light-success">Simpan</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg fade" id="modal-show-log" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Log Budidaya</h3>
+                    <!--begin::Close-->
+                    <div type="button" class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal"
+                        aria-label="Close">
+                        <!--begin::Svg Icon | path: /var/www/preview.keenthemes.com/kt-products/docs/metronic/html/releases/2022-10-09-043348/core/html/src/media/icons/duotune/general/gen034.svg-->
+                        <span class="svg-icon svg-icon-danger svg-icon-2x"><svg width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect opacity="0.3" x="2" y="2" width="20" height="20"
+                                    rx="5" fill="currentColor" />
+                                <rect x="7" y="15.3137" width="12" height="2" rx="1"
+                                    transform="rotate(-45 7 15.3137)" fill="currentColor" />
+                                <rect x="8.41422" y="7" width="12" height="2" rx="1"
+                                    transform="rotate(45 8.41422 7)" fill="currentColor" />
+                            </svg>
+                        </span>
+                        <!--end::Svg Icon-->
+                    </div>
+                    <!--end::Close-->
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group mb-10">
+                        <label class="form-label">Detil Kegiatan</label>
+                        <p id="detil-kegiatan-show" class="form-control form-control form-control-solid">
+                        </p>
+                    </div>
+                    <div class="form-group mb-10">
+                        <label class="form-label">Tanggal</label>
+                        <input disabled type="text" id="tgl-log-show" class="form-control form-control-solid"
+                            placeholder="Pilih Tanggal">
+                    </div>
+                    <div class="form-group mb-10">
+                        <label class="form-label">Waktu</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input disabled type="text" id="time-start-show"
+                                    class=" form-control form-control-solid" placeholder="Mulai">
+                            </div>
+                            <div class="col-md-6">
+                                <input disabled type="text" id="time-end-show" class="form-control form-control-solid"
+                                    placeholder="Selesai">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-10" id="select-fase">
+                        <label class="form-label">Fase Budidaya</label>
+                        <input disabled type="text" id="fase-show" class="form-control form-control-solid mb-4"
+                            placeholder="Fase">
+                        <input disabled type="text" id="tahap-show" class="form-control form-control-solid mb-4"
+                            placeholder="Tahap">
+                        <input disabled type="text" id="kegiatan-show" class="form-control form-control-solid mb-4"
+                            placeholder="Kegiatan">
+                        <input disabled type="text" id="fase-detil-kegiatan-show"
+                            class="form-control form-control-solid mb-4" placeholder="Detil Kegiatan">
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="form-label">Hama/Penyakit</label>
+                        <table class="table table-row-bordered border table-rounded gx-5">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Jenis</th>
+                                    <th class="text-center">Nama</th>
+                                    <th class="text-center">Deskripsi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="list-hama-penyakit-show">
+                                <tr class="text-center">
+                                    <td colspan="3">Tidak ada data</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="separator mb-4 mt-4"></div>
+
+                    <div id="foto-log-show" style="display: flex; flex: 2; gap: 1rem; flex-wrap: wrap;">
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Tutup</button>
+                </div>
             </div>
         </div>
     </div>
@@ -387,5 +489,7 @@
         const urlDeleteFotoTmp = "{{ route('log.deleteFotoTmp') }}"
         const urlSubmitLog = "{{ route('log.submitLog') }}"
         const urlLoadTable = "{{ route('log.reloadTable') }}"
+        const urlGetLog = "{{ route('log.getLogbook') }}"
+        const baseUrlFoto = "{{ url('storage/foto-logbook-tmp') }}"
     </script>
 @endsection
