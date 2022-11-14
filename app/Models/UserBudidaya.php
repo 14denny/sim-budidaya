@@ -30,7 +30,7 @@ class UserBudidaya extends Model
         $response = AppHelper::post_encrypt_curl("index.php/login", $data); //eksekusi api login
         if ($response && is_object($response)) {
             if ($response->metadata->code != 200) {
-                return $response;
+                return false;
             }
             $data_mhs = $response->result;
 

@@ -45,7 +45,7 @@ class AuthController extends Controller
             if (!$user) {
                 $user = $userModel->attempLoginMhs($username, $password);
                 if (!$user) {
-                    throw new Exception("Username atau password salah 1");
+                    throw new Exception("Username atau password salah");
                 }
             }
 
