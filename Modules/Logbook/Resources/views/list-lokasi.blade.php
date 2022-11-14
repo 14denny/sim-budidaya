@@ -43,7 +43,7 @@
                             {{ $item->nama_lokasi }}
                         </h2>
                         <h5>
-                            {{ $item->propinsi }}, {{ $item->kabkota }}, {{ $item->kecamatan }}, {{ $item->desa }}
+                            Propinsi {{ $item->ket_propinsi }}, {{ $item->ket_kabkota }}, Kecamatan {{ $item->ket_kecamatan }}, Desa {{ $item->ket_desa }}
                         </h5>
                     </div>
                 </a>

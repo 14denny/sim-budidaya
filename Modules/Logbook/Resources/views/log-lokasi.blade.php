@@ -47,8 +47,8 @@
                         <tr>
                             <td class="fit-td pe-7 align-top fw-bold">Alamat</td>
                             <td class="align-top">:</td>
-                            <td>{{ $lokasi->propinsi }}, {{ $lokasi->kabkota }}, {{ $lokasi->kecamatan }},
-                                {{ $lokasi->desa }}
+                            <td>Propinsi {{ $lokasi->ket_propinsi }}, {{ $lokasi->ket_kabkota }}, Kecamatan {{ $lokasi->ket_kecamatan }},
+                                Desa {{ $lokasi->ket_desa }}
                             </td>
                         </tr>
                     </table>

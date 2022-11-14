@@ -15,10 +15,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('manajemen/lokasi')->name('lokasi.')->middleware(['managerOnly'])->group(function() {
     Route::get('/', 'LokasiController@all')->name('all');
-    Route::get('/getOne', 'LokasiController@getOne')->name('getOne');
+    Route::post('/get-one', 'LokasiController@getOne')->name('getOne');
     Route::delete('/', 'LokasiController@delete')->name('delete');
     Route::post('/', 'LokasiController@insert')->name('insert');
     Route::put('/', 'LokasiController@edit')->name('edit');
+    Route::post('/get-kabkota', 'LokasiController@getKabkota')->name('getKabkota');
+    Route::post('/get-kecamatan', 'LokasiController@getKecamatan')->name('getKecamatan');
+    Route::post('/get-desa', 'LokasiController@getDesa')->name('getDesa');
 });
 Route::prefix('manajemen/asign_lokasi')->name('asign_lokasi.')->middleware(['managerOnly'])->group(function() {
     Route::get('/', 'LokasiPesertaController@all')->name('all');

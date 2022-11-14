@@ -37,7 +37,14 @@ class PesertaModel extends Model
     }
 
     function getAllLokasiPeserta($npm){
-        return DB::table('lokasi_kerja_peserta')->select(['lokasi_kerja.*'])
+        return DB::table('lokasi_kerja_peserta')
+        ->select([
+            'lokasi_kerja.*',
+            DB::raw('(SELECT propinsi from geolokasi g where substr(g.id,1,2)=lokasi_kerja.propinsi limit 1) as ket_propinsi'),
+            DB::raw('(SELECT kabdankot from geolokasi g where substr(g.id,1,5)=lokasi_kerja.kabkota limit 1) as ket_kabkota'),
+            DB::raw('(SELECT kecamatan from geolokasi g where substr(g.id,1,8)=lokasi_kerja.kecamatan limit 1) as ket_kecamatan'),
+            DB::raw('(SELECT desa from geolokasi g where g.id=lokasi_kerja.desa limit 1) as ket_desa'),
+        ])
         ->join('lokasi_kerja', 'lokasi_kerja.id','=', 'lokasi_kerja_peserta.id_lokasi')->where('lokasi_kerja_peserta.npm', $npm)->get();
     }
 }

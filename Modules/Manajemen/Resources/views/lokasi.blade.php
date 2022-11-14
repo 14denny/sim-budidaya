@@ -28,14 +28,29 @@
                         </div>
                         <div class="form-group mb-4">
                             <label class="form-label">Alamat</label>
-                            <input type="text" name="propinsi" id="propinsi" placeholder="Propinsi"
-                                class="form-control form-control-solid mb-4">
-                            <input type="text" name="kabkota" id="kabkota" placeholder="Kabupaten/kota"
+                            {{-- <input type="text" name="propinsi" id="propinsi" placeholder="Propinsi"
+                                class="form-control form-control-solid mb-4"> --}}
+                            <select onchange="changePropinsi(this)" name="propinsi" id="propinsi" class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Propinsi">
+                                <option></option>
+                                @foreach ($allProp as $item)
+                                    <option value="{{$item->id}}">{{$item->ket}}</option>
+                                @endforeach
+                            </select>
+                            <div id="select-kabkota">
+
+                            </div>
+                            <div id="select-kecamatan">
+                                
+                            </div>
+                            <div id="select-desa">
+                                
+                            </div>
+                            {{-- <input type="text" name="kabkota" id="kabkota" placeholder="Kabupaten/kota"
                                 class="form-control form-control-solid mb-4">
                             <input type="text" name="kecamatan" id="kecamatan" placeholder="Kecamatan"
                                 class="form-control form-control-solid mb-4">
                             <input type="text" name="desa" id="desa" placeholder="Desa"
-                                class="form-control form-control-solid mb-4">
+                                class="form-control form-control-solid mb-4"> --}}
                         </div>
                         <div class="form-group mt-4 text-end">
                             <button type="submit" class="btn btn-success">Tambah Lokasi</button>
@@ -151,7 +166,7 @@
                                     <td>{{ $loop->index + 1 }}</td>
                                     <td>{{ $item->id }}</td>
                                     <td>{{ $item->nama_lokasi }}</td>
-                                    <td>{{ "$item->propinsi, $item->kabkota, $item->kecamatan, $item->desa" }}</td>
+                                    <td>{{ "Propinsi $item->ket_propinsi, $item->ket_kabkota, Kecamatan $item->ket_kecamatan, Desa $item->ket_desa" }}</td>
                                     <td>
                                         <button class="btn btn-sm btn-danger btn-icon" onclick="deleteLokasi(this)"
                                             data-id="{{ $item->id }}" data-nama="{{ $item->nama_lokasi }}"><i
@@ -196,14 +211,26 @@
                         </div>
                         <div class="form-group mb-4">
                             <label class="form-label">Alamat</label>
-                            <input type="text" name="propinsi" id="propinsi_edit" placeholder="Propinsi"
+                            <div id="select-propinsi-edit">
+
+                            </div>
+                            <div id="select-kabkota-edit">
+
+                            </div>
+                            <div id="select-kecamatan-edit">
+                                
+                            </div>
+                            <div id="select-desa-edit">
+                                
+                            </div>
+                            {{-- <input type="text" name="propinsi" id="propinsi_edit" placeholder="Propinsi"
                                 class="form-control form-control-solid mb-4">
                             <input type="text" name="kabkota" id="kabkota_edit" placeholder="Kabupaten/kota"
                                 class="form-control form-control-solid mb-4">
                             <input type="text" name="kecamatan" id="kecamatan_edit" placeholder="Kecamatan"
                                 class="form-control form-control-solid mb-4">
                             <input type="text" name="desa" id="desa_edit" placeholder="Desa"
-                                class="form-control form-control-solid mb-4">
+                                class="form-control form-control-solid mb-4"> --}}
                         </div>
                     </div>
 
@@ -223,6 +250,9 @@
         const urlGetOneLokasi = "{{ route('lokasi.getOne') }}"
         const urlDeleteLokasi = "{{ route('lokasi.delete') }}"
         const urlEditLokasi = "{{ route('lokasi.edit') }}"
+        const urlGetKabkota = "{{ route('lokasi.getKabkota') }}"
+        const urlGetKecamatan = "{{ route('lokasi.getKecamatan') }}"
+        const urlGetDesa = "{{ route('lokasi.getDesa') }}"
     </script>
     <script src="{{ url('modules/manajemen/js/lokasi.js') }}"></script>
 @endsection

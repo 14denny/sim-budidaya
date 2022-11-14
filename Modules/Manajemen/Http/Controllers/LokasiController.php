@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 use Modules\Manajemen\Entities\LokasiModel;
 
 class LokasiController extends Controller
@@ -13,9 +14,99 @@ class LokasiController extends Controller
     public function all()
     {
         $lokasiModel = new LokasiModel();
+        $allProp = $lokasiModel->getAllProp();
         return view('manajemen::lokasi', [
-            'lokasi' => $lokasiModel->getAllLokasi()
+            'lokasi' => $lokasiModel->getAllLokasi(),
+            'allProp' => $allProp
         ]);
+    }
+
+    public function getKabkota(Request $request){
+        try {
+            $id = $request->post('id');
+            if(!$id){
+                throw new \Exception("ID alamat tidak dapat ditemukan");
+            }
+            $edit = $request->post('edit');
+
+            $lokasiModel = new LokasiModel();
+
+            $list = $lokasiModel->getKabkota($id);
+
+            $select2 = view('manajemen::ajax/select2', ['name' => 'kabkota', 'list' => $list, 'onchange' => true, 'edit' => ($edit == 1)])->render();
+            
+            echo json_encode(array(
+                'status' => true,
+                'msg' => 'Ok',
+                'select2' => $select2,
+                'csrf_token' => csrf_token()
+            ));
+        } catch (\Exception $e) {
+            echo json_encode(array(
+                'status' => false,
+                'msg' => $e->getMessage(),
+                'csrf_token' => csrf_token()
+            ));
+        }
+    }
+
+    public function getKecamatan(Request $request){
+        try {
+            $id = $request->post('id');
+            if(!$id){
+                throw new \Exception("ID alamat tidak dapat ditemukan");
+            }
+            $edit = $request->post('edit');
+
+            $lokasiModel = new LokasiModel();
+
+            $list = $lokasiModel->getKecamatan($id);
+
+            $select2 = view('manajemen::ajax/select2', ['name' => 'kecamatan', 'list' => $list, 'onchange' =>true, 'edit' => ($edit == 1)])->render();
+            
+            echo json_encode(array(
+                'status' => true,
+                'msg' => 'Ok',
+                'select2' => $select2,
+                'csrf_token' => csrf_token()
+            ));
+        } catch (\Exception $e) {
+            echo json_encode(array(
+                'status' => false,
+                'msg' => $e->getMessage(),
+                'csrf_token' => csrf_token()
+            ));
+        }
+    }
+
+    public function getDesa(Request $request){
+        try {
+            $id = $request->post('id');
+            if(!$id){
+                throw new \Exception("ID alamat tidak dapat ditemukan");
+            }
+
+            $edit = $request->post('edit');
+
+            $lokasiModel = new LokasiModel();
+
+            $list = $lokasiModel->getDesa($id);
+
+            $select2 = view('manajemen::ajax/select2', ['name' => 'desa', 'list' => $list, 'onchange' =>false, 'edit' => ($edit == 1)])->render();
+            
+            echo json_encode(array(
+                'status' => true,
+                'msg' => 'Ok',
+                'select2' => $select2,
+                'csrf_token' => csrf_token()
+            ));
+        } catch (\Exception $e) {
+            echo json_encode(array(
+                'status' => false,
+                'msg' => $e->getMessage(),
+                'csrf_token' => csrf_token()
+            ));
+        }
     }
 
     public function insert(Request $request)
@@ -42,7 +133,7 @@ class LokasiController extends Controller
             $lokasiModel = new LokasiModel();
             $insertID = $lokasiModel->insert($newLokasi);
             if ($insertID) {
-                $newLokasi['id'] = $insertID;
+                $newLokasi = $lokasiModel->getLokasiById($insertID);
                 echo json_encode(array(
                     'status' => true,
                     'msg' => "Berhasil menambahkan lokasi baru",
@@ -66,10 +157,10 @@ class LokasiController extends Controller
         try {
             $id = $request->post('id_lokasi_edit');
             $nama = $request->post('nama_lokasi');
-            $propinsi = $request->post('propinsi');
-            $kabkota = $request->post('kabkota');
-            $kecamatan = $request->post('kecamatan');
-            $desa = $request->post('desa');
+            $propinsi = $request->post('propinsi_edit');
+            $kabkota = $request->post('kabkota_edit');
+            $kecamatan = $request->post('kecamatan_edit');
+            $desa = $request->post('desa_edit');
 
             if (!$id || !$nama || !$propinsi || !$kabkota || !$kecamatan || !$desa) {
                 throw new Exception("Harap lengkapi data dengan benar");
@@ -90,7 +181,7 @@ class LokasiController extends Controller
             );
 
             if ($lokasiModel->updateLokasi($id, $updateLokasi)) {
-                $updateLokasi['id'] = $id;
+                $updateLokasi = $lokasiModel->getLokasiById($id);
                 echo json_encode(array(
                     'status' => true,
                     'msg' => "Berhasil mengubah data lokasi",
@@ -148,14 +239,29 @@ class LokasiController extends Controller
     {
         try {
             $id = $request->input('id');
+            $edit = $request->input('edit');
             $lokasiModel = new LokasiModel();
 
             $lokasi = $lokasiModel->getLokasiById($id);
             if ($lokasi) {
+                $listProp = $lokasiModel->getAllProp();
+                $listKabkota = $lokasiModel->getKabkota($lokasi->propinsi);
+                $listKecamatan = $lokasiModel->getKecamatan($lokasi->kabkota);
+                $listDesa = $lokasiModel->getDesa($lokasi->kecamatan);
+    
+                $selectProp = view('manajemen::ajax/select2', ['name' => 'propinsi', 'list' => $listProp, 'onchange' => true, 'edit' => ($edit == 1)])->render();
+                $selectKabkota = view('manajemen::ajax/select2', ['name' => 'kabkota', 'list' => $listKabkota, 'onchange' => true, 'edit' => ($edit == 1)])->render();
+                $selectKecamatan = view('manajemen::ajax/select2', ['name' => 'kecamatan', 'list' => $listKecamatan, 'onchange' => true, 'edit' => ($edit == 1)])->render();
+                $selectDesa = view('manajemen::ajax/select2', ['name' => 'desa', 'list' => $listDesa, 'onchange' => true, 'edit' => ($edit == 1)])->render();
+
                 echo json_encode(array(
                     'status' => true,
                     'msg' => "Ok",
                     'lokasi' => $lokasi,
+                    'selectProp' => $selectProp,
+                    'selectKabkota' => $selectKabkota,
+                    'selectKecamatan' => $selectKecamatan,
+                    'selectDesa' => $selectDesa,
                     'csrf_token' => csrf_token()
                 ));
             } else {

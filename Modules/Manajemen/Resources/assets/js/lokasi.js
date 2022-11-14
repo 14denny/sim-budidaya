@@ -46,7 +46,7 @@ $("#form-add-lokasi").submit((e) => {
                             tableLokasi.getNextNumber(),
                             result.newLokasi.id,
                             result.newLokasi.nama_lokasi,
-                            `${result.newLokasi.propinsi}, ${result.newLokasi.kabkota}, ${result.newLokasi.kecamatan}, ${result.newLokasi.desa}`,
+                            `Propinsi ${result.newLokasi.ket_propinsi}, ${result.newLokasi.ket_kabkota}, Kecamatan ${result.newLokasi.ket_kecamatan}, Desa ${result.newLokasi.ket_desa}`,
                             `<button onclick="deleteLokasi(this)" data-id="${result.newLokasi.id}" data-nama="${result.newLokasi.nama_lokasi}" class="btn btn-sm btn-icon btn-danger">
                                 <i class="fa fa-trash"></i>
                             </button>
@@ -90,7 +90,7 @@ $("#form-edit-lokasi").submit((e) => {
                             tableLokasi.getCurrentNumber(`.${result.updateLokasi.id}`),
                             result.updateLokasi.id,
                             result.updateLokasi.nama_lokasi,
-                            `${result.updateLokasi.propinsi}, ${result.updateLokasi.kabkota}, ${result.updateLokasi.kecamatan}, ${result.updateLokasi.desa}`,
+                            `Propinsi ${result.updateLokasi.ket_propinsi}, ${result.updateLokasi.ket_kabkota}, Kecamatan ${result.updateLokasi.ket_kecamatan}, Desa ${result.updateLokasi.ket_desa}`,
                             `<button onclick="deleteLokasi(this)" data-id="${result.updateLokasi.id}" data-nama="${result.updateLokasi.nama_lokasi}" class="btn btn-sm btn-icon btn-danger">
                                 <i class="fa fa-trash"></i>
                             </button>
@@ -155,11 +155,12 @@ function editLokasi(button) {
     showSwalLoader()
     $.ajax({
         url: urlGetOneLokasi,
-        type: 'get',
+        type: 'post',
         dataType: 'json',
         data: {
             _token: csrf_token,
-            id: id
+            id: id,
+            edit: 1
         },
         success: (result) => {
 
@@ -171,12 +172,161 @@ function editLokasi(button) {
 
                 $("#id_lokasi_edit").val(result.lokasi.id)
                 $("#nama_lokasi_edit").val(result.lokasi.nama_lokasi)
+                
+                $("#select-propinsi-edit").html(result.selectProp)
                 $("#propinsi_edit").val(result.lokasi.propinsi)
+                $("#propinsi_edit").select2({
+                    dropdownParent: "#select-propinsi-edit"
+                })
+                
+                $("#select-kabkota-edit").html(result.selectKabkota)
                 $("#kabkota_edit").val(result.lokasi.kabkota)
+                $("#kabkota_edit").select2({
+                    dropdownParent: "#select-kabkota-edit"
+                })
+                
+                $("#select-kecamatan-edit").html(result.selectKecamatan)
                 $("#kecamatan_edit").val(result.lokasi.kecamatan)
+                $("#kecamatan_edit").select2({
+                    dropdownParent: "#select-kecamatan-edit"
+                })
+                
+                $("#select-desa-edit").html(result.selectDesa)
                 $("#desa_edit").val(result.lokasi.desa)
+                $("#desa_edit").select2({
+                    dropdownParent: "#select-desa-edit"
+                })
 
                 $("#modal-edit-lokasi").modal('show')
+            } else {
+                showSwal('error', result.msg)
+            }
+        }
+    }).fail(() => {
+        swalFailed()
+    })
+}
+
+function changePropinsi(el, edit = false) {
+    const select = $(el)
+
+    const id = select.val()
+
+    $(`#select-kabkota${edit ? '-edit' : ''}`).html('')
+    $(`#select-kecamatan${edit ? '-edit' : ''}`).html('')
+    $(`#select-desa${edit ? '-edit' : ''}`).html('')
+
+    if (!id) {
+        return
+    }
+
+    showSwalLoader()
+
+    $.ajax({
+        url: urlGetKabkota,
+        type: 'post',
+        dataType: 'json',
+        data: {
+            _token: csrf_token,
+            id: id,
+            edit: (edit ? 1 : 0)
+        },
+        success: (result) => {
+            csrf_token = result.csrf_token
+            $("input[name=_token]").val(csrf_token)
+
+            if (result.status) {
+                closeSwal()
+
+                $(`#select-kabkota${edit ? '-edit' : ''}`).html(result.select2)
+                $(`#kabkota${edit ? '_edit' : ''}`).select2({
+                    placeholder: 'Pilih Kabupaten/Kota'
+                })
+            } else {
+                showSwal('error', result.msg)
+            }
+        }
+    }).fail(() => {
+        swalFailed()
+    })
+}
+
+function changeKabkota(el, edit = false) {
+    const select = $(el)
+
+    const id = select.val()
+
+    $(`#select-kecamatan${edit ? '-edit' : ''}`).html('')
+    $(`#select-desa${edit ? '-edit' : ''}`).html('')
+
+    if (!id) {
+        return
+    }
+
+    showSwalLoader()
+
+    $.ajax({
+        url: urlGetKecamatan,
+        type: 'post',
+        dataType: 'json',
+        data: {
+            _token: csrf_token,
+            id: id,
+            edit: (edit == false ? 0 : 1)
+        },
+        success: (result) => {
+            csrf_token = result.csrf_token
+            $("input[name=_token]").val(csrf_token)
+
+            if (result.status) {
+                closeSwal()
+
+                $(`#select-kecamatan${edit ? '-edit' : ''}`).html(result.select2)
+                $(`#kecamatan${edit ? '_edit' : ''}`).select2({
+                    placeholder: 'Pilih Kecamatan'
+                })
+            } else {
+                showSwal('error', result.msg)
+            }
+        }
+    }).fail(() => {
+        swalFailed()
+    })
+}
+
+function changeKecamatan(el, edit = false) {
+    const select = $(el)
+
+    const id = select.val()
+
+    $(`#select-desa${edit ? '-edit' : ''}`).html('')
+
+    if (!id) {
+        return
+    }
+
+    showSwalLoader()
+
+    $.ajax({
+        url: urlGetDesa,
+        type: 'post',
+        dataType: 'json',
+        data: {
+            _token: csrf_token,
+            id: id,
+            edit: (edit ? 1 : 0)
+        },
+        success: (result) => {
+            csrf_token = result.csrf_token
+            $("input[name=_token]").val(csrf_token)
+
+            if (result.status) {
+                closeSwal()
+
+                $(`#select-desa${edit ? '-edit' : ''}`).html(result.select2)
+                $(`#desa${edit ? '_edit' : ''}`).select2({
+                    placeholder: 'Pilih Desa'
+                })
             } else {
                 showSwal('error', result.msg)
             }

@@ -117,7 +117,7 @@
                                     <td>{{ $loop->index + 1 }}</td>
                                     <td>{{ $item->id }}</td>
                                     <td>{{ $item->nama_lokasi }}</td>
-                                    <td>{{ "$item->propinsi, $item->kabkota, $item->kecamatan, $item->desa" }}</td>
+                                    <td>{{ "Propinsi $item->ket_propinsi, $item->ket_kabkota, Kecamatan $item->ket_kecamatan, Desa $item->ket_desa" }}</td>
                                     <td>
                                         <a href="{{ route('asign_lokasi.asign', ['id' => $item->id]) }}"
                                             class="btn btn-sm border border-primary btn-light-primary"
