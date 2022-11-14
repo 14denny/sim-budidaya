@@ -970,7 +970,7 @@ function editLog(el) {
 
                         $("#id_logbook").val(idLog);
 
-                        $("#detil-edit").html(log.deskripsi)
+                        $("#detil-edit").val(log.deskripsi)
                         datePickerEdit.setDate(log.tgl_log)
                         startTimePickerEdit.setDate(log.time_start)
                         endTimePickerEdit.setDate(log.time_end)
