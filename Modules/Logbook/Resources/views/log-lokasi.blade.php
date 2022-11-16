@@ -47,8 +47,22 @@
                         <tr>
                             <td class="fit-td pe-7 align-top fw-bold">Alamat</td>
                             <td class="align-top">:</td>
-                            <td>Propinsi {{ $lokasi->ket_propinsi }}, {{ $lokasi->ket_kabkota }}, Kecamatan {{ $lokasi->ket_kecamatan }},
+                            <td>Propinsi {{ $lokasi->ket_propinsi }}, {{ $lokasi->ket_kabkota }}, Kecamatan
+                                {{ $lokasi->ket_kecamatan }},
                                 Desa {{ $lokasi->ket_desa }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fit-td pe-7 align-top fw-bold">Anggota</td>
+                            <td class="align-top">:</td>
+                            <td>
+                                @foreach ($pesertaLokasi as $item)
+                                    @if ($loop->last)
+                                        - {{ $item->nama }}
+                                    @else
+                                        - {{ $item->nama }}<br>
+                                    @endif
+                                @endforeach
                             </td>
                         </tr>
                     </table>
@@ -381,8 +395,8 @@
                 <div class="modal-header">
                     <h3 class="modal-title">Edit Log Budidaya</h3>
                     <!--begin::Close-->
-                    <div type="button" class="btn btn-icon btn-sm btn-active-light-primary ms-2" onclick="closeModalEdit()"
-                        aria-label="Close">
+                    <div type="button" class="btn btn-icon btn-sm btn-active-light-primary ms-2"
+                        onclick="closeModalEdit()" aria-label="Close">
                         <!--begin::Svg Icon | path: /var/www/preview.keenthemes.com/kt-products/docs/metronic/html/releases/2022-10-09-043348/core/html/src/media/icons/duotune/general/gen034.svg-->
                         <span class="svg-icon svg-icon-danger svg-icon-2x"><svg width="24" height="24"
                                 viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -411,8 +425,8 @@
                         </div>
                         <div class="form-group mb-10">
                             <label class="form-label">Tanggal</label>
-                            <input type="text" id="tgl_log-edit" name="tgl_log" class="form-control form-control-solid"
-                                placeholder="Pilih Tanggal">
+                            <input type="text" id="tgl_log-edit" name="tgl_log"
+                                class="form-control form-control-solid" placeholder="Pilih Tanggal">
                         </div>
                         <div class="form-group mb-10">
                             <label class="form-label">Waktu</label>
@@ -446,8 +460,9 @@
 
                         <div class="form-group mb-4">
                             <div class="form-check form-check-custom form-check-warning form-check-solid">
-                                <input class="form-check-input" onchange="toggleAddHamaEdit(this)" id="ada_hama_penyakit-edit"
-                                    name="ada_hama_penyakit" type="checkbox" value="1" />
+                                <input class="form-check-input" onchange="toggleAddHamaEdit(this)"
+                                    id="ada_hama_penyakit-edit" name="ada_hama_penyakit" type="checkbox"
+                                    value="1" />
                                 <label class="form-check-label fs-5" for="ada_hama_penyakit-edit">
                                     Ditemukan hama/penyakit
                                 </label>
@@ -528,7 +543,9 @@
                                             untuk mengunggah
                                             file</h3>
                                         <span class="fw-semibold fs-4 text-muted">
-                                            Maks. 4 file yang dapat diunggah dengan ukuran maks 5 MB.<br><span class="text-danger">Jika kamu menambahkan foto disini, maka foto lama akan dihapus ketika <b>SIMPAN</b></span>
+                                            Maks. 4 file yang dapat diunggah dengan ukuran maks 5 MB.<br><span
+                                                class="text-danger">Jika kamu menambahkan foto disini, maka foto lama akan
+                                                dihapus ketika <b>SIMPAN</b></span>
                                         </span>
                                     </div>
                                     <!--end::Info-->

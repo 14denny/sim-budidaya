@@ -32,6 +32,7 @@ class LogbookController extends Controller
         $lokasiModel = new LokasiModel();
 
         $lokasi = $lokasiModel->getLokasiById($id);
+        $pesertaLokasi = $lokasiModel->getPesertaLokasi($id);
 
         if (!$lokasi) {
             AppHelper::swal($request, 'info', 'Lokasi tidak dapat ditemukan');
@@ -53,6 +54,7 @@ class LogbookController extends Controller
         $logbookModel = new LogbookModel();
         $dataView = array(
             'lokasi' => $lokasi,
+            'pesertaLokasi'=> $pesertaLokasi,
             'allFase' => $logbookModel->getAllFase(),
             'allHamaPenyakit' => $logbookModel->getAllHamaPenyakit(),
             'logbook' => $logbookModel->getListLog($id)

@@ -33,14 +33,14 @@ class LokasiModel extends Model
     function getLokasiById($id)
     {
         return DB::table('lokasi_kerja')
-        ->select([
-            'lokasi_kerja.*',
-            DB::raw('(SELECT propinsi from geolokasi g where substr(g.id,1,2)=lokasi_kerja.propinsi limit 1) as ket_propinsi'),
-            DB::raw('(SELECT kabdankot from geolokasi g where substr(g.id,1,5)=lokasi_kerja.kabkota limit 1) as ket_kabkota'),
-            DB::raw('(SELECT kecamatan from geolokasi g where substr(g.id,1,8)=lokasi_kerja.kecamatan limit 1) as ket_kecamatan'),
-            DB::raw('(SELECT desa from geolokasi g where g.id=lokasi_kerja.desa limit 1) as ket_desa'),
-        ])
-        ->where('id', $id)->first();
+            ->select([
+                'lokasi_kerja.*',
+                DB::raw('(SELECT propinsi from geolokasi g where substr(g.id,1,2)=lokasi_kerja.propinsi limit 1) as ket_propinsi'),
+                DB::raw('(SELECT kabdankot from geolokasi g where substr(g.id,1,5)=lokasi_kerja.kabkota limit 1) as ket_kabkota'),
+                DB::raw('(SELECT kecamatan from geolokasi g where substr(g.id,1,8)=lokasi_kerja.kecamatan limit 1) as ket_kecamatan'),
+                DB::raw('(SELECT desa from geolokasi g where g.id=lokasi_kerja.desa limit 1) as ket_desa'),
+            ])
+            ->where('id', $id)->first();
     }
 
     function checkLokasiUsed($id)
@@ -68,7 +68,8 @@ class LokasiModel extends Model
         return DB::select("SELECT p.npm, p.nama, p.prodi, p.fakultas,
             (select keterangan from jenis_kelamin jk where jk.id=p.jenis_kelamin) as jenis_kelamin
             from (select * from lokasi_kerja_peserta where id_lokasi=?) lkp
-            join peserta p on p.npm=lkp.npm", [$id]);
+            join peserta p on p.npm=lkp.npm
+            order by nama", [$id]);
     }
 
     function checkPesertaLokasiExists($idLokasi, $npm)
