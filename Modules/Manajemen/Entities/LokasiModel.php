@@ -82,6 +82,11 @@ class LokasiModel extends Model
         return DB::table('lokasi_kerja_peserta')->insert($data);
     }
 
+    function insertPesertaLokasiBatch($data)
+    {
+        return DB::table('lokasi_kerja_peserta')->insert($data);
+    }
+
     function deletePesertaLokasi($idLokasi, $npm)
     {
         return DB::table('lokasi_kerja_peserta')->where('npm', $npm)

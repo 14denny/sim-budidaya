@@ -29,4 +29,7 @@ Route::prefix('manajemen/asign_lokasi')->name('asign_lokasi.')->middleware(['man
     Route::delete('/', 'LokasiPesertaController@deletePesertaLokasi')->name('delete');
     Route::get('/{id}', 'LokasiPesertaController@asignPeserta')->name('asign');
     Route::post('/cari-mhs', 'LokasiPesertaController@cariMhs')->name('cariMhs');
+    Route::post('/upload-excel', 'LokasiPesertaController@uploadExcelMhs')->name('uploadExcel');
+    Route::post('/check-excel', 'LokasiPesertaController@checkExcelMhs')->name('checkExcel');
+    Route::post('/import-excel', 'LokasiPesertaController@importExcelMhs')->name('importExcel');
 });
