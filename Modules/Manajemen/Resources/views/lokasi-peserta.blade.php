@@ -107,6 +107,7 @@
                                 <th class="text-center fit-td px-7">No</th>
                                 <th class="text-center">ID Lokasi</th>
                                 <th class="text-center">Nama Lokasi</th>
+                                <th class="text-center">Periode</th>
                                 <th class="text-center">Alamat</th>
                                 <th class="text-center fit-td px-15">Aksi</th>
                             </tr>
@@ -117,6 +118,18 @@
                                     <td>{{ $loop->index + 1 }}</td>
                                     <td>{{ $item->id }}</td>
                                     <td>{{ $item->nama_lokasi }}</td>
+                                    <td>
+                                        @if ($item->tahun_awal == $item->tahun_akhir)
+                                            {{ AppHelper::get_nama_bulan($item->bulan_awal) }} -
+                                            {{ AppHelper::get_nama_bulan($item->bulan_akhir) }}
+                                            {{ $item->tahun_awal }}
+                                        @else
+                                            {{ AppHelper::get_nama_bulan($item->bulan_awal) }} {{ $item->tahun_awal }}
+                                            -
+                                            {{ AppHelper::get_nama_bulan($item->bulan_akhir) }}
+                                            {{ $item->tahun_akhir }}
+                                        @endif
+                                    </td>
                                     <td>{{ "Propinsi $item->ket_propinsi, $item->ket_kabkota, Kecamatan $item->ket_kecamatan, Desa $item->ket_desa" }}</td>
                                     <td>
                                         <a href="{{ route('asign_lokasi.asign', ['id' => $item->id]) }}"
@@ -187,5 +200,5 @@
         const urlDeleteLokasi = "{{ route('lokasi.delete') }}"
         const urlEditLokasi = "{{ route('lokasi.edit') }}"
     </script>
-    <script src="{{ url('modules/manajemen/js/lokasi.js') }}"></script>
+    <script src="{{ url('modules/manajemen/js/lokasi-peserta.js') }}"></script>
 @endsection
