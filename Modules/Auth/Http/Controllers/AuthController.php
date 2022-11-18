@@ -19,7 +19,8 @@ class AuthController extends Controller
     public function index(Request $request)
     {
         if ($request->session()->has('username')) {
-            return redirect(route('beranda.index'));
+            $firstMenu = MenuHelper::getFirstMenuRole(session('roleid'));
+            return redirect($firstMenu);
         }
         return view('auth::index');
     }
@@ -111,24 +112,9 @@ class AuthController extends Controller
         }
     }
 
-    public function cek()
-    {
-        print_r(session('menus'));
-    }
-
     public function logout(Request $request)
     {
         $request->session()->flush();
         return redirect(route('auth.form'));
-    }
-
-    public function tes(Request $request)
-    {
-        if ($request->session()->has('username')) {
-            echo "ada";
-        } else {
-            echo "tidah ada";
-        }
-        return;
     }
 }
