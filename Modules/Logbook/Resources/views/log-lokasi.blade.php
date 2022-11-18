@@ -45,6 +45,19 @@
                             <td>{{ $lokasi->nama_lokasi }}</td>
                         </tr>
                         <tr>
+                            <td class="fit-td pe-7 align-top fw-bold">Periode</td>
+                            <td>:</td>
+                            <td>
+                                @if ($lokasi->tahun_awal == $lokasi->tahun_akhir)
+                                    {{ AppHelper::get_nama_bulan($lokasi->bulan_awal) }} -
+                                    {{ AppHelper::get_nama_bulan($lokasi->bulan_akhir) }} {{ $lokasi->tahun_awal }}
+                                @else
+                                    {{ AppHelper::get_nama_bulan($lokasi->bulan_awal) }} {{ $lokasi->tahun_awal }} -
+                                    {{ AppHelper::get_nama_bulan($lokasi->bulan_akhir) }} {{ $lokasi->tahun_akhir }}
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
                             <td class="fit-td pe-7 align-top fw-bold">Alamat</td>
                             <td class="align-top">:</td>
                             <td>Propinsi {{ $lokasi->ket_propinsi }}, {{ $lokasi->ket_kabkota }}, Kecamatan
@@ -56,13 +69,11 @@
                             <td class="fit-td pe-7 align-top fw-bold">Anggota</td>
                             <td class="align-top">:</td>
                             <td>
-                                @foreach ($pesertaLokasi as $item)
-                                    @if ($loop->last)
-                                        - {{ $item->nama }}
-                                    @else
-                                        - {{ $item->nama }}<br>
-                                    @endif
-                                @endforeach
+                                <ul class="ps-5">
+                                    @foreach ($pesertaLokasi as $item)
+                                        <li>{{ $item->nama }}</li>
+                                    @endforeach
+                                </ul>
                             </td>
                         </tr>
                     </table>

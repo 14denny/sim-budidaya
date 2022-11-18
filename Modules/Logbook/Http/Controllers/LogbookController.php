@@ -530,11 +530,8 @@ class LogbookController extends Controller
                 'user_insert' => session('username')
             );
 
-            $status = $logbookModel->updateLogbook($idLog, $dataUpdate);
-            if (!$status) {
-                throw new \Exception("Gagal mengubah log kegiatan. Harap coba lagi");
-            }
-
+            $logbookModel->updateLogbook($idLog, $dataUpdate);
+            
             //move data
             $logbookModel->updateHamaPenyakitLog($idLog, session('id_lokasi'));
             $logbookModel->updateFotoLog($idLog, session('id_lokasi'));

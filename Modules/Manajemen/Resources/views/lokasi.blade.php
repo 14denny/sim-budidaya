@@ -26,24 +26,74 @@
                             <input type="text" name="nama_lokasi" id="nama_lokasi" placeholder="Nama Lokasi"
                                 class="form-control form-control-solid">
                         </div>
+                        <div class="form-group row mb-4">
+                            <label class="form-label">Periode Awal</label>
+                            <div class="col-md-6">
+                                <select name="tahun_awal" id="tahun_awal" class="form-select form-select-solid"
+                                    data-control="select2" data-placeholder="Tahun">
+                                    <option></option>
+                                    @php
+                                        $tahuns = [date('Y') - 1, date('Y'), date('Y') + 1];
+                                    @endphp
+                                    @foreach ($tahuns as $item)
+                                        <option value="{{ $item }}">{{ $item }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <select name="bulan_awal" id="bulan_awal" class="form-select form-select-solid"
+                                    data-control="select2" data-placeholder="Bulan">
+                                    <option></option>
+                                    @foreach ($bulans as $item)
+                                        <option value="{{ $item['num'] }}">{{ $item['name'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-4">
+                            <label class="form-label">Periode Akhir</label>
+                            <div class="col-md-6">
+                                <select name="tahun_akhir" id="tahun_akhir" class="form-select form-select-solid"
+                                    data-control="select2" data-placeholder="Tahun">
+                                    <option></option>
+                                    @php
+                                        $tahuns = [date('Y') - 1, date('Y'), date('Y') + 1];
+                                    @endphp
+                                    @foreach ($tahuns as $item)
+                                        <option value="{{ $item }}">{{ $item }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <select name="bulan_akhir" id="bulan_akhir" class="form-select form-select-solid"
+                                    data-control="select2" data-placeholder="Bulan">
+                                    <option></option>
+                                    @foreach ($bulans as $item)
+                                        <option value="{{ $item['num'] }}">{{ $item['name'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                         <div class="form-group mb-4">
                             <label class="form-label">Alamat</label>
                             {{-- <input type="text" name="propinsi" id="propinsi" placeholder="Propinsi"
                                 class="form-control form-control-solid mb-4"> --}}
-                            <select onchange="changePropinsi(this)" name="propinsi" id="propinsi" class="form-select form-select-solid" data-control="select2" data-placeholder="Pilih Propinsi">
+                            <select onchange="changePropinsi(this)" name="propinsi" id="propinsi"
+                                class="form-select form-select-solid mb-4" data-control="select2"
+                                data-placeholder="Pilih Propinsi">
                                 <option></option>
                                 @foreach ($allProp as $item)
-                                    <option value="{{$item->id}}">{{$item->ket}}</option>
+                                    <option value="{{ $item->id }}">{{ $item->ket }}</option>
                                 @endforeach
                             </select>
                             <div id="select-kabkota">
 
                             </div>
                             <div id="select-kecamatan">
-                                
+
                             </div>
                             <div id="select-desa">
-                                
+
                             </div>
                             {{-- <input type="text" name="kabkota" id="kabkota" placeholder="Kabupaten/kota"
                                 class="form-control form-control-solid mb-4">
@@ -156,6 +206,7 @@
                                 <th class="text-center fit-td px-7">No</th>
                                 <th class="text-center">ID Lokasi</th>
                                 <th class="text-center">Nama Lokasi</th>
+                                <th class="text-center">Periode</th>
                                 <th class="text-center">Alamat</th>
                                 <th class="text-center fit-td px-15">Aksi</th>
                             </tr>
@@ -166,7 +217,20 @@
                                     <td>{{ $loop->index + 1 }}</td>
                                     <td>{{ $item->id }}</td>
                                     <td>{{ $item->nama_lokasi }}</td>
-                                    <td>{{ "Propinsi $item->ket_propinsi, $item->ket_kabkota, Kecamatan $item->ket_kecamatan, Desa $item->ket_desa" }}</td>
+                                    <td>
+                                        @if ($item->tahun_awal == $item->tahun_akhir)
+                                            {{ AppHelper::get_nama_bulan($item->bulan_awal) }} -
+                                            {{ AppHelper::get_nama_bulan($item->bulan_akhir) }}
+                                            {{ $item->tahun_awal }}
+                                        @else
+                                            {{ AppHelper::get_nama_bulan($item->bulan_awal) }} {{ $item->tahun_awal }}
+                                            -
+                                            {{ AppHelper::get_nama_bulan($item->bulan_akhir) }}
+                                            {{ $item->tahun_akhir }}
+                                        @endif
+                                    </td>
+                                    <td>{{ "Propinsi $item->ket_propinsi, $item->ket_kabkota, Kecamatan $item->ket_kecamatan, Desa $item->ket_desa" }}
+                                    </td>
                                     <td>
                                         <button class="btn btn-sm btn-danger btn-icon" onclick="deleteLokasi(this)"
                                             data-id="{{ $item->id }}" data-nama="{{ $item->nama_lokasi }}"><i
@@ -209,6 +273,57 @@
                             <input type="text" name="nama_lokasi" id="nama_lokasi_edit" placeholder="Nama Lokasi"
                                 class="form-control form-control-solid">
                         </div>
+
+                        <div class="form-group row mb-4">
+                            <label class="form-label">Periode Awal</label>
+                            <div class="col-md-6">
+                                <select name="tahun_awal_edit" id="tahun_awal_edit" class="form-select form-select-solid"
+                                    data-control="select2" data-placeholder="Tahun">
+                                    <option></option>
+                                    @php
+                                        $tahuns = [date('Y') - 1, date('Y'), date('Y') + 1];
+                                    @endphp
+                                    @foreach ($tahuns as $item)
+                                        <option value="{{ $item }}">{{ $item }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <select name="bulan_awal_edit" id="bulan_awal_edit" class="form-select form-select-solid"
+                                    data-control="select2" data-placeholder="Bulan">
+                                    <option></option>
+                                    @foreach ($bulans as $item)
+                                        <option value="{{ $item['num'] }}">{{ $item['name'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-4">
+                            <label class="form-label">Periode Akhir</label>
+                            <div class="col-md-6">
+                                <select name="tahun_akhir_edit" id="tahun_akhir_edit"
+                                    class="form-select form-select-solid" data-control="select2"
+                                    data-placeholder="Tahun">
+                                    <option></option>
+                                    @php
+                                        $tahuns = [date('Y') - 1, date('Y'), date('Y') + 1];
+                                    @endphp
+                                    @foreach ($tahuns as $item)
+                                        <option value="{{ $item }}">{{ $item }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <select name="bulan_akhir_edit" id="bulan_akhir_edit"
+                                    class="form-select form-select-solid" data-control="select2"
+                                    data-placeholder="Bulan">
+                                    <option></option>
+                                    @foreach ($bulans as $item)
+                                        <option value="{{ $item['num'] }}">{{ $item['name'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                         <div class="form-group mb-4">
                             <label class="form-label">Alamat</label>
                             <div id="select-propinsi-edit">
@@ -218,10 +333,10 @@
 
                             </div>
                             <div id="select-kecamatan-edit">
-                                
+
                             </div>
                             <div id="select-desa-edit">
-                                
+
                             </div>
                             {{-- <input type="text" name="propinsi" id="propinsi_edit" placeholder="Propinsi"
                                 class="form-control form-control-solid mb-4">

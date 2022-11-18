@@ -5,15 +5,15 @@ KTUtil.onDOMContentLoaded((function () {
         pageLength: 10,
         lengthChange: true,
         columnDefs: [{
-            orderable: true,
-            targets: [0, 1, 2, 4]
+            orderable: false,
+            targets: [5]
         },
         {
             className: 'text-center',
-            target: [0, 1, 4]
+            target: [0, 1, 5]
         }],
         createdRow: function (row, data, dataIndex, cells) {
-            $(row).addClass(data[1] +" align-middle");
+            $(row).addClass(data[1] + " align-middle");
         }
     })
 }));
@@ -172,25 +172,29 @@ function editLokasi(button) {
 
                 $("#id_lokasi_edit").val(result.lokasi.id)
                 $("#nama_lokasi_edit").val(result.lokasi.nama_lokasi)
-                
+                $("#tahun_awal_edit").val(result.lokasi.tahun_awal).trigger('change')
+                $("#bulan_awal_edit").val(result.lokasi.bulan_awal).trigger('change')
+                $("#tahun_akhir_edit").val(result.lokasi.tahun_akhir).trigger('change')
+                $("#bulan_akhir_edit").val(result.lokasi.bulan_akhir).trigger('change')
+
                 $("#select-propinsi-edit").html(result.selectProp)
                 $("#propinsi_edit").val(result.lokasi.propinsi)
                 $("#propinsi_edit").select2({
                     dropdownParent: "#select-propinsi-edit"
                 })
-                
+
                 $("#select-kabkota-edit").html(result.selectKabkota)
                 $("#kabkota_edit").val(result.lokasi.kabkota)
                 $("#kabkota_edit").select2({
                     dropdownParent: "#select-kabkota-edit"
                 })
-                
+
                 $("#select-kecamatan-edit").html(result.selectKecamatan)
                 $("#kecamatan_edit").val(result.lokasi.kecamatan)
                 $("#kecamatan_edit").select2({
                     dropdownParent: "#select-kecamatan-edit"
                 })
-                
+
                 $("#select-desa-edit").html(result.selectDesa)
                 $("#desa_edit").val(result.lokasi.desa)
                 $("#desa_edit").select2({

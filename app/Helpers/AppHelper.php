@@ -125,4 +125,29 @@ class AppHelper
     {
         return join('-', array_reverse(explode('-', $date)));
     }
+
+    public static function get_all_bulans(){
+        return [
+            ['num' => '01', 'name' => 'Januari'],
+            ['num' => '02', 'name' => 'Febriari'],
+            ['num' => '03', 'name' => 'Maret'],
+            ['num' => '04', 'name' => 'April'],
+            ['num' => '05', 'name' => 'Mei'],
+            ['num' => '06', 'name' => 'Juni'],
+            ['num' => '07', 'name' => 'Juli'],
+            ['num' => '08', 'name' => 'Agustus'],
+            ['num' => '09', 'name' => 'September'],
+            ['num' => '10', 'name' => 'Oktober'],
+            ['num' => '11', 'name' => 'November'],
+            ['num' => '12', 'name' => 'Desember'],
+        ];
+    }
+
+    public static function get_nama_bulan($bulan){
+        $bulans = self::get_all_bulans();
+        if (intval($bulan) >= 1 && intval($bulan) <= 12) {
+            return $bulans[$bulan - 1]['name'];
+        }
+        return '';
+    }
 }

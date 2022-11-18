@@ -2,11 +2,10 @@
 
 namespace Modules\Manajemen\Http\Controllers;
 
+use App\Helpers\AppHelper;
 use Exception;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\DB;
 use Modules\Manajemen\Entities\LokasiModel;
 
 class LokasiController extends Controller
@@ -15,16 +14,21 @@ class LokasiController extends Controller
     {
         $lokasiModel = new LokasiModel();
         $allProp = $lokasiModel->getAllProp();
+        $tahuns = [date('Y') - 1, date('Y'), date('Y') + 1];
+        $bulans = AppHelper::get_all_bulans();
         return view('manajemen::lokasi', [
             'lokasi' => $lokasiModel->getAllLokasi(),
-            'allProp' => $allProp
+            'allProp' => $allProp,
+            'tahuns' => $tahuns,
+            'bulans' => $bulans,
         ]);
     }
 
-    public function getKabkota(Request $request){
+    public function getKabkota(Request $request)
+    {
         try {
             $id = $request->post('id');
-            if(!$id){
+            if (!$id) {
                 throw new \Exception("ID alamat tidak dapat ditemukan");
             }
             $edit = $request->post('edit');
@@ -34,7 +38,7 @@ class LokasiController extends Controller
             $list = $lokasiModel->getKabkota($id);
 
             $select2 = view('manajemen::ajax/select2', ['name' => 'kabkota', 'list' => $list, 'onchange' => true, 'edit' => ($edit == 1)])->render();
-            
+
             echo json_encode(array(
                 'status' => true,
                 'msg' => 'Ok',
@@ -50,10 +54,11 @@ class LokasiController extends Controller
         }
     }
 
-    public function getKecamatan(Request $request){
+    public function getKecamatan(Request $request)
+    {
         try {
             $id = $request->post('id');
-            if(!$id){
+            if (!$id) {
                 throw new \Exception("ID alamat tidak dapat ditemukan");
             }
             $edit = $request->post('edit');
@@ -62,8 +67,8 @@ class LokasiController extends Controller
 
             $list = $lokasiModel->getKecamatan($id);
 
-            $select2 = view('manajemen::ajax/select2', ['name' => 'kecamatan', 'list' => $list, 'onchange' =>true, 'edit' => ($edit == 1)])->render();
-            
+            $select2 = view('manajemen::ajax/select2', ['name' => 'kecamatan', 'list' => $list, 'onchange' => true, 'edit' => ($edit == 1)])->render();
+
             echo json_encode(array(
                 'status' => true,
                 'msg' => 'Ok',
@@ -79,10 +84,11 @@ class LokasiController extends Controller
         }
     }
 
-    public function getDesa(Request $request){
+    public function getDesa(Request $request)
+    {
         try {
             $id = $request->post('id');
-            if(!$id){
+            if (!$id) {
                 throw new \Exception("ID alamat tidak dapat ditemukan");
             }
 
@@ -92,8 +98,8 @@ class LokasiController extends Controller
 
             $list = $lokasiModel->getDesa($id);
 
-            $select2 = view('manajemen::ajax/select2', ['name' => 'desa', 'list' => $list, 'onchange' =>false, 'edit' => ($edit == 1)])->render();
-            
+            $select2 = view('manajemen::ajax/select2', ['name' => 'desa', 'list' => $list, 'onchange' => false, 'edit' => ($edit == 1)])->render();
+
             echo json_encode(array(
                 'status' => true,
                 'msg' => 'Ok',
@@ -117,9 +123,20 @@ class LokasiController extends Controller
             $kabkota = $request->post('kabkota');
             $kecamatan = $request->post('kecamatan');
             $desa = $request->post('desa');
+            $tahunAwal = $request->post('tahun_awal');
+            $bulanAwal = $request->post('bulan_awal');
+            $tahunAkhir = $request->post('tahun_akhir');
+            $bulanAkhir = $request->post('bulan_akhir');
 
-            if (!$nama || !$propinsi || !$kabkota || !$kecamatan || !$desa) {
+            if (
+                !$nama || !$propinsi || !$kabkota || !$kecamatan || !$desa
+                || !$tahunAwal || !$bulanAwal || !$tahunAkhir || !$bulanAkhir
+            ) {
                 throw new Exception("Harap lengkapi  data dengan benar");
+            }
+
+            if ($tahunAwal . $bulanAwal > $tahunAkhir . $bulanAkhir) {
+                throw new \Exception("Periode awal harus lebih kecil dari periode akhir");
             }
 
             $newLokasi = array(
@@ -128,6 +145,10 @@ class LokasiController extends Controller
                 'kabkota' => $kabkota,
                 'kecamatan' => $kecamatan,
                 'desa' => $desa,
+                'tahun_awal' => $tahunAwal,
+                'bulan_awal' => $bulanAwal,
+                'tahun_akhir' => $tahunAkhir,
+                'bulan_akhir' => $bulanAkhir,
             );
 
             $lokasiModel = new LokasiModel();
@@ -161,14 +182,25 @@ class LokasiController extends Controller
             $kabkota = $request->post('kabkota_edit');
             $kecamatan = $request->post('kecamatan_edit');
             $desa = $request->post('desa_edit');
+            $tahunAwal = $request->post('tahun_awal_edit');
+            $bulanAwal = $request->post('bulan_awal_edit');
+            $tahunAkhir = $request->post('tahun_akhir_edit');
+            $bulanAkhir = $request->post('bulan_akhir_edit');
 
-            if (!$id || !$nama || !$propinsi || !$kabkota || !$kecamatan || !$desa) {
+            if (
+                !$id || !$nama || !$propinsi || !$kabkota || !$kecamatan || !$desa
+                || !$tahunAwal || !$bulanAwal || !$tahunAkhir || !$bulanAkhir
+            ) {
                 throw new Exception("Harap lengkapi data dengan benar");
+            }
+
+            if ($tahunAwal . $bulanAwal > $tahunAkhir . $bulanAkhir) {
+                throw new \Exception("Periode awal harus lebih kecil dari periode akhir");
             }
 
             $lokasiModel = new LokasiModel();
 
-            if(!$lokasiModel->getLokasiById($id)){
+            if (!$lokasiModel->getLokasiById($id)) {
                 throw new Exception("Lokasi tidak dapat ditemukan");
             }
 
@@ -178,6 +210,10 @@ class LokasiController extends Controller
                 'kabkota' => $kabkota,
                 'kecamatan' => $kecamatan,
                 'desa' => $desa,
+                'tahun_awal' => $tahunAwal,
+                'bulan_awal' => $bulanAwal,
+                'tahun_akhir' => $tahunAkhir,
+                'bulan_akhir' => $bulanAkhir,
             );
 
             if ($lokasiModel->updateLokasi($id, $updateLokasi)) {
@@ -248,7 +284,7 @@ class LokasiController extends Controller
                 $listKabkota = $lokasiModel->getKabkota($lokasi->propinsi);
                 $listKecamatan = $lokasiModel->getKecamatan($lokasi->kabkota);
                 $listDesa = $lokasiModel->getDesa($lokasi->kecamatan);
-    
+
                 $selectProp = view('manajemen::ajax/select2', ['name' => 'propinsi', 'list' => $listProp, 'onchange' => true, 'edit' => ($edit == 1)])->render();
                 $selectKabkota = view('manajemen::ajax/select2', ['name' => 'kabkota', 'list' => $listKabkota, 'onchange' => true, 'edit' => ($edit == 1)])->render();
                 $selectKecamatan = view('manajemen::ajax/select2', ['name' => 'kecamatan', 'list' => $listKecamatan, 'onchange' => true, 'edit' => ($edit == 1)])->render();

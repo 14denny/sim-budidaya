@@ -29,7 +29,8 @@
                     <div class="card-body d-flex flex-column flex-center text-center">
                         <!--begin::Svg Icon | path: /var/www/preview.keenthemes.com/kt-products/docs/metronic/html/releases/2022-10-09-043348/core/html/src/media/icons/duotune/maps/map008.svg-->
                         <span class="svg-icon svg-icon-primary svg-icon-5x">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
                                 <path opacity="0.3"
                                     d="M18.0624 15.3454L13.1624 20.7453C12.5624 21.4453 11.5624 21.4453 10.9624 20.7453L6.06242 15.3454C4.56242 13.6454 3.76242 11.4452 4.06242 8.94525C4.56242 5.34525 7.46242 2.44534 11.0624 2.04534C15.8624 1.54534 19.9624 5.24525 19.9624 9.94525C20.0624 12.0452 19.2624 13.9454 18.0624 15.3454ZM13.0624 10.0453C13.0624 9.44534 12.6624 9.04534 12.0624 9.04534C11.4624 9.04534 11.0624 9.44534 11.0624 10.0453V13.0453H13.0624V10.0453Z"
                                     fill="currentColor" />
@@ -42,8 +43,18 @@
                         <h2>
                             {{ $item->nama_lokasi }}
                         </h2>
+                        <h6 class="mb-3">
+                            @if ($item->tahun_awal == $item->tahun_akhir)
+                                {{ AppHelper::get_nama_bulan($item->bulan_awal) }} -
+                                {{ AppHelper::get_nama_bulan($item->bulan_akhir) }} {{ $item->tahun_awal }}
+                            @else
+                                {{ AppHelper::get_nama_bulan($item->bulan_awal) }} {{ $item->tahun_awal }} -
+                                {{ AppHelper::get_nama_bulan($item->bulan_akhir) }} {{ $item->tahun_akhir }}
+                            @endif
+                        </h6>
                         <h5>
-                            Propinsi {{ $item->ket_propinsi }}, {{ $item->ket_kabkota }}, Kecamatan {{ $item->ket_kecamatan }}, Desa {{ $item->ket_desa }}
+                            Propinsi {{ $item->ket_propinsi }}, {{ $item->ket_kabkota }}, Kecamatan
+                            {{ $item->ket_kecamatan }}, Desa {{ $item->ket_desa }}
                         </h5>
                     </div>
                 </a>
