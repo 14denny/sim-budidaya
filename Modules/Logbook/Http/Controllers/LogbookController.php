@@ -163,6 +163,7 @@ class LogbookController extends Controller
     {
         try {
             $idHamaPenyakit = $request->post('hama_penyakit');
+            $penemuanLain = $request->post('penemuan_lain');
             $idLokasi = session('id_lokasi');
 
             if (!$idHamaPenyakit) {
@@ -172,38 +173,54 @@ class LogbookController extends Controller
                 throw new \Exception("ID Lokasi tidak ditemukan");
             }
 
+            if($idHamaPenyakit == -1 && !$penemuanLain){
+                throw new \Exception("Harap masukkan temuan lainnya yang kamu temukan");
+            }
+
             $lokasiModel = new LokasiModel();
             if (!$lokasiModel->getLokasiById($idLokasi)) {
                 throw new \Exception("Lokasi tidak dapat ditemukan");
             }
 
             $hamaPenyakitModel = new HamaPenyakitModel();
-            $hamaPenyakit = $hamaPenyakitModel->getHamaPenyakitById($idHamaPenyakit);
-            if (!$hamaPenyakit) {
-                throw new \Exception("Hama/Penyakit tidak dapat ditemukan");
+            if($idHamaPenyakit != -1){
+                $hamaPenyakit = $hamaPenyakitModel->getHamaPenyakitById($idHamaPenyakit);
+                if (!$hamaPenyakit) {
+                    throw new \Exception("Hama/Penyakit tidak dapat ditemukan");
+                }
             }
 
             $logbookModel = new LogbookModel();
             $npm = session('username');
 
-            if ($logbookModel->checkIdHamaPenyakitTmpExists($idLokasi, $idHamaPenyakit)) {
-                throw new \Exception("Hama/penyakit sudah pernah dimasukkan");
+            if ($idHamaPenyakit != -1) {
+                if ($logbookModel->checkIdHamaPenyakitTmpExists($idLokasi, $idHamaPenyakit)) {
+                    throw new \Exception("Hama/penyakit sudah pernah dimasukkan");
+                }
             }
 
             $dataInsert = array(
                 'id_lokasi' => $idLokasi,
-                'npm_insert' => $npm,
-                'id_hama_penyakit' => $idHamaPenyakit
+                'npm_insert' => $npm
             );
 
-            $idInsert = $logbookModel->insertHamaPenyakitTmp($dataInsert);
+            if ($idHamaPenyakit != -1) {
+                $dataInsert['id_hama_penyakit'] = $idHamaPenyakit;
+                $idInsert = $logbookModel->insertHamaPenyakitTmp($dataInsert);
+            } else {
+                $dataInsert['penemuan'] = $penemuanLain;
+                $idInsert = $logbookModel->insertPenemuanLainTmp($dataInsert);
+            }
+
             if ($idInsert) {
                 $listHamaPenyakit = $logbookModel->getHamaPenyakitTmp($idLokasi);
+                $listPenemuanLain = $logbookModel->getPenemuanLainTmp($idLokasi);
 
                 echo json_encode(array(
                     'status' => true,
                     'msg' => 'Ok',
                     'listHamaPenyakit' => $listHamaPenyakit,
+                    'listPenemuanLain' => $listPenemuanLain,
                     'csrf_token' => csrf_token()
                 ));
             } else {
@@ -225,6 +242,7 @@ class LogbookController extends Controller
 
             $logbookModel = new LogbookModel();
             $logbookModel->clearHamaPenyakitTmp($idLokasi);
+            $logbookModel->clearPenemuanLainTmp($idLokasi);
             $logbookModel->clearFotoTmp($idLokasi);
 
             echo json_encode(array(
@@ -253,6 +271,7 @@ class LogbookController extends Controller
             }
 
             $logbookModel->copyHamaPenyakitToTmp($idLog, $idLokasi);
+            $logbookModel->copyPenemuanLainToTmp($idLog, $idLokasi);
             $logbookModel->clearFotoTmp($idLokasi);
 
             echo json_encode(array(
@@ -288,6 +307,35 @@ class LogbookController extends Controller
                 ));
             } else {
                 throw new \Exception("Gagal menghapus data hama penyakit");
+            }
+        } catch (\Exception $e) {
+            echo json_encode(array(
+                'status' => false,
+                'msg' => $e->getMessage(),
+                'csrf_token' => csrf_token()
+            ));
+        }
+    }
+
+    function deletePenemuanLainTmp(Request $request)
+    {
+        try {
+            $idLokasi = session('id_lokasi');
+            $idPenemuanLain = $request->post('id_penemuan_lain');
+
+            $logbookModel = new LogbookModel();
+            if (!$logbookModel->checkPenemuanLainTmp($idLokasi, $idPenemuanLain)) {
+                throw new \Exception("Data penemuan lain tidak dapat ditemukan");
+            }
+
+            if ($logbookModel->deletePenemuanLainTmp($idLokasi, $idPenemuanLain)) {
+                echo json_encode(array(
+                    'status' => true,
+                    'msg' => 'Ok',
+                    'csrf_token' => csrf_token()
+                ));
+            } else {
+                throw new \Exception("Gagal menghapus data penemuan lain");
             }
         } catch (\Exception $e) {
             echo json_encode(array(
@@ -448,6 +496,7 @@ class LogbookController extends Controller
 
             //move data
             $logbookModel->moveHamaPenyakitTmp($logbookId, session('id_lokasi'));
+            $logbookModel->movePenemuanLainTmp($logbookId, session('id_lokasi'));
             $logbookModel->moveFotoTmp($logbookId, session('id_lokasi'));
 
             echo json_encode(array(
@@ -534,6 +583,7 @@ class LogbookController extends Controller
             
             //move data
             $logbookModel->updateHamaPenyakitLog($idLog, session('id_lokasi'));
+            $logbookModel->updatePenemuanLainLog($idLog, session('id_lokasi'));
             $logbookModel->updateFotoLog($idLog, session('id_lokasi'));
 
             echo json_encode(array(
@@ -605,6 +655,7 @@ class LogbookController extends Controller
             
             //get hama/penyakit
             $hamaPenyakit = $edit ? $logbookModel->getHamaPenyakitTmpByIdLokasi(session('id_lokasi')) : $logbookModel->getHamaPenyakitByIdLog($id);
+            $listPenemuanLain = $edit ? $logbookModel->getPenemuanLainTmpByIdLokasi(session('id_lokasi')) : $logbookModel->getPenemuanLainByIdLog($id);
 
             //ref fase
             $fase = $logbookModel->getAllFase();
@@ -627,6 +678,7 @@ class LogbookController extends Controller
                 'log' => $log,
                 'foto' => $foto,
                 'hamaPenyakit' => $hamaPenyakit,
+                'listPenemuanLain' => $listPenemuanLain,
                 'select2Fase' => $select2Fase,
                 'select2Tahap' => $select2Tahap,
                 'select2Kegiatan' => $select2Kegiatan,
@@ -660,6 +712,7 @@ class LogbookController extends Controller
 
             $logbookModel->deleteLogbook($idLog);
             $logbookModel->deleteHamaPenyakit($idLog);
+            $logbookModel->deletePenemuanLain($idLog);
             $logbookModel->deleteFoto($idLog);
 
             echo json_encode(array(

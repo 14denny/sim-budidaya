@@ -101,11 +101,27 @@ class LogbookModel extends Model
             ->first();
     }
 
+    function checkPenemuanLainTmp($idLokasi, $idPenemuanLain)
+    {
+        return DB::table('penemuan_lain_log_tmp')
+            ->where('id_lokasi', $idLokasi)
+            ->where('id', $idPenemuanLain)
+            ->first();
+    }
+
     function deleteHamaPenyakitTmp($idLokasi, $idHamaPenyakitTmp)
     {
         return DB::table('hama_penyakit_log_tmp')
             ->where('id_lokasi', $idLokasi)
             ->where('id', $idHamaPenyakitTmp)
+            ->delete();
+    }
+    
+    function deletePenemuanLainTmp($idLokasi, $idPenemuanLain)
+    {
+        return DB::table('penemuan_lain_log_tmp')
+            ->where('id_lokasi', $idLokasi)
+            ->where('id', $idPenemuanLain)
             ->delete();
     }
 
@@ -114,9 +130,21 @@ class LogbookModel extends Model
         return DB::table('hama_penyakit_log_tmp')->insertGetId($dataInsert);
     }
 
+    function insertPenemuanLainTmp($dataInsert)
+    {
+        return DB::table('penemuan_lain_log_tmp')->insertGetId($dataInsert);
+    }
+
     function clearHamaPenyakitTmp($idLokasi)
     {
         return DB::table('hama_penyakit_log_tmp')
+            ->where('id_lokasi', $idLokasi)
+            ->delete();
+    }
+
+    function clearPenemuanLainTmp($idLokasi)
+    {
+        return DB::table('penemuan_lain_log_tmp')
             ->where('id_lokasi', $idLokasi)
             ->delete();
     }
@@ -143,6 +171,28 @@ class LogbookModel extends Model
         return DB::table('hama_penyakit_log_tmp')->insert($dataInsert);
     }
 
+    function copyPenemuanLainToTmp($idLog, $idLokasi)
+    {
+        $penemuanLain = DB::table('penemuan_lain_log')
+            ->where('id_lokasi', $idLokasi)
+            ->where('id_logbook', $idLog)
+            ->get();
+
+        $dataInsert = [];
+        foreach ($penemuanLain as $item) {
+            array_push($dataInsert, [
+                'id_lokasi' => $idLokasi,
+                'penemuan' => $item->penemuan,
+                'npm_insert' => session('username'),
+            ]);
+        }
+
+        DB::table('penemuan_lain_log_tmp')
+            ->where('id_lokasi', $idLokasi)->delete();
+
+        return DB::table('penemuan_lain_log_tmp')->insert($dataInsert);
+    }
+
     function getHamaPenyakitTmp($idLokasi)
     {
         return DB::table('hama_penyakit_log_tmp')
@@ -152,6 +202,15 @@ class LogbookModel extends Model
             ->where('hama_penyakit_log_tmp.id_lokasi', $idLokasi)
             ->where('hama_penyakit_log_tmp.npm_insert', session('username'))
             ->orderBy('hama_penyakit_log_tmp.inserted_at')
+            ->get();
+    }
+
+    function getPenemuanLainTmp($idLokasi)
+    {
+        return DB::table('penemuan_lain_log_tmp')
+            ->where('id_lokasi', $idLokasi)
+            ->where('npm_insert', session('username'))
+            ->orderBy('inserted_at')
             ->get();
     }
 
@@ -222,6 +281,31 @@ class LogbookModel extends Model
         }
     }
 
+    function movePenemuanLainTmp($idLogbook, $idLokasi)
+    {
+        $listHamaPenyakit = DB::table('penemuan_lain_log_tmp')
+            ->where('id_lokasi', $idLokasi)->get();
+
+        $dataInsert = [];
+        foreach ($listHamaPenyakit as $item) {
+            array_push($dataInsert, [
+                'npm_insert' => session('username'),
+                'id_logbook' => $idLogbook,
+                'id_lokasi' => $idLokasi,
+                'penemuan' => $item->penemuan
+            ]);
+        }
+
+        $insert = DB::table('penemuan_lain_log')->insert($dataInsert);
+        if ($insert) {
+            DB::table('penemuan_lain_log_tmp')
+                ->where('id_lokasi', $idLokasi)->delete();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     function updateHamaPenyakitLog($idLogbook, $idLokasi)
     {
         $listHamaPenyakit = DB::table('hama_penyakit_log_tmp')
@@ -242,6 +326,33 @@ class LogbookModel extends Model
         $insert = DB::table('hama_penyakit_log')->insert($dataInsert);
         if ($insert) {
             DB::table('hama_penyakit_log_tmp')
+                ->where('id_lokasi', $idLokasi)->delete();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function updatePenemuanLainLog($idLogbook, $idLokasi)
+    {
+        $listHamaPenyakit = DB::table('penemuan_lain_log_tmp')
+            ->where('id_lokasi', $idLokasi)->get();
+
+        $dataInsert = [];
+        foreach ($listHamaPenyakit as $item) {
+            array_push($dataInsert, [
+                'npm_insert' => session('username'),
+                'id_logbook' => $idLogbook,
+                'id_lokasi' => $idLokasi,
+                'penemuan' => $item->penemuan
+            ]);
+        }
+
+        DB::table('penemuan_lain_log')
+            ->where('id_logbook', $idLogbook)->delete();
+        $insert = DB::table('penemuan_lain_log')->insert($dataInsert);
+        if ($insert) {
+            DB::table('penemuan_lain_log_tmp')
                 ->where('id_lokasi', $idLokasi)->delete();
             return true;
         } else {
@@ -365,6 +476,12 @@ class LogbookModel extends Model
         ->where('hama_penyakit_log.id_logbook', $idLog)->get();
     }
 
+    function getPenemuanLainByIdLog($idLog){
+        return DB::table('penemuan_lain_log')
+            ->where('id_logbook', $idLog)
+            ->get();
+    }
+
     function getHamaPenyakitTmpByIdLokasi($idLokasi){
         return DB::table('hama_penyakit_log_tmp')
         ->select([
@@ -378,6 +495,13 @@ class LogbookModel extends Model
         ->get();
     }
 
+    function getPenemuanLainTmpByIdLokasi($idLokasi){
+        return DB::table('penemuan_lain_log_tmp')
+            ->where('id_lokasi', $idLokasi)
+            ->where('npm_insert', session('username'))
+            ->get();
+    }
+
     function checkLogbookLokasi($idLog, $idLokasi){
         return DB::table('logbook')->where('id_lokasi', $idLokasi)->where('id', $idLog)->first();
     }
@@ -388,6 +512,10 @@ class LogbookModel extends Model
 
     function deleteHamaPenyakit($idLog){
         return DB::table('hama_penyakit_log')->where('id_logbook', $idLog)->delete();
+    }
+
+    function deletePenemuanLain($idLog){
+        return DB::table('penemuan_lain_log')->where('id_logbook', $idLog)->delete();
     }
 
     function deleteFoto($idLog){

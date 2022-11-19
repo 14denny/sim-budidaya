@@ -320,7 +320,10 @@
                                                 data-desc="{{ $item->deskripsi }}" value="{{ $item->id }}">
                                                 {{ $item->ket }}</option>
                                         @endforeach
+                                        <option value="-1">Lainnya</option>
                                     </select>
+                                    <textarea rows="4" type="text" name="ditemukan_lainnya" id="ditemukan_lainnya"
+                                        style="display: none" placeholder="Apa yang kamu temukan? (maks. 200 karakter)" class="mt-5 form-control form-control-solid"></textarea>
                                 </div>
                                 <div class="col-md-3">
                                     <button type="button" onclick="tambahHamaPenyakit()" class="mt-7 btn btn-info">
@@ -495,7 +498,10 @@
                                                 data-desc="{{ $item->deskripsi }}" value="{{ $item->id }}">
                                                 {{ $item->ket }}</option>
                                         @endforeach
+                                        <option value="-1">Lainnya</option>
                                     </select>
+                                    <textarea type="text" name="ditemukan_lainnya-edit" id="ditemukan_lainnya-edit"
+                                        style="display: none" placeholder="Apa yang kamu temukan? (maks. 200 karakter)" class="form-control form-control-solid mt-5"></textarea>
                                 </div>
                                 <div class="col-md-3">
                                     <button type="button" onclick="tambahHamaPenyakitEdit()" class="mt-7 btn btn-info">
@@ -685,6 +691,7 @@
         const urlInsertHamaPenyakit = "{{ route('log.insertHamaPenyakit') }}"
         const urlClearLogTmp = "{{ route('log.clearLogTmp') }}"
         const urlDeleteHamaPenyakit = "{{ route('log.deleteHamaPenyakitTmp') }}"
+        const urlDeletePenemuanLain = "{{ route('log.deletePenemuanLainTmp') }}"
         const idLokasi = "{{ $lokasi->id }}"
         const urlUploadFotoTmp = "{{ route('log.uploadFotoTmp') }}"
         const urlDeleteFotoTmp = "{{ route('log.deleteFotoTmp') }}"

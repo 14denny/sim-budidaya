@@ -466,7 +466,8 @@ function changeKegiatanEdit(el) {
 function getDeskripsiHamaPenyakit(el) {
     const select = $(el)
     const selectedOpt = select.find(':selected')
-    if (selectedOpt.val()) {
+    $("#ditemukan_lainnya").hide()
+    if (selectedOpt.val() && selectedOpt.val() != '-1') {
         const ketJenis = selectedOpt.data('ket-jenis')
         const deskripsi = selectedOpt.data('desc')
 
@@ -475,7 +476,11 @@ function getDeskripsiHamaPenyakit(el) {
             (deskripsi ? `<strong>DESKRIPSI:</strong><br>${deskripsi}` : '')
         )
     } else {
-        $("#desc").html('')
+        if (selectedOpt.val() == '-1') {
+            $("#ditemukan_lainnya").show()
+        } else {
+            $("#desc").html('')
+        }
     }
 
 }
@@ -483,7 +488,7 @@ function getDeskripsiHamaPenyakit(el) {
 function getDeskripsiHamaPenyakitEdit(el) {
     const select = $(el)
     const selectedOpt = select.find(':selected')
-    if (selectedOpt.val()) {
+    if (selectedOpt.val() && selectedOpt.val() != '-1') {
         const ketJenis = selectedOpt.data('ket-jenis')
         const deskripsi = selectedOpt.data('desc')
 
@@ -492,7 +497,11 @@ function getDeskripsiHamaPenyakitEdit(el) {
             (deskripsi ? `<strong>DESKRIPSI:</strong><br>${deskripsi}` : '')
         )
     } else {
-        $("#desc-edit").html('')
+        if (selectedOpt.val() == '-1') {
+            $("#ditemukan_lainnya-edit").show()
+        } else {
+            $("#desc-edit").html('')
+        }
     }
 
 }
@@ -599,6 +608,13 @@ function tambahHamaPenyakit() {
         return;
     }
 
+    //idHamaPenyakit == -1 artinya ada penemuan lain
+    const penemuanLain = $("#ditemukan_lainnya").val();
+    if (idHamaPenyakit == '-1' && !penemuanLain) {
+        showSwal('info', 'Harap masukkan penemuan yang kamu temukan');
+        return;
+    }
+
     showSwalLoader()
     $.ajax({
         url: urlInsertHamaPenyakit,
@@ -606,6 +622,7 @@ function tambahHamaPenyakit() {
         dataType: 'json',
         data: {
             _token: csrf_token,
+            penemuan_lain: penemuanLain,
             hama_penyakit: idHamaPenyakit,
         },
         success: (result) => {
@@ -616,6 +633,7 @@ function tambahHamaPenyakit() {
                 $("#list-hama-penyakit").html('')
                 closeSwal()
                 const listHamaPenyakit = result.listHamaPenyakit;
+                const listPenemuanLain = result.listPenemuanLain;
 
                 $.each(listHamaPenyakit, (index, hamaPenyakitTmp) => {
                     $("#list-hama-penyakit").append(`
@@ -629,8 +647,21 @@ function tambahHamaPenyakit() {
                     `);
                 });
 
+                $.each(listPenemuanLain, (index, item) => {
+                    $("#list-hama-penyakit").append(`
+                    <tr>
+                        <td class="text-center align-middle">-</td>
+                        <td class="align-middle">${item.penemuan}</td>
+                        <td class="text-center">
+                            <button type="button" onclick="hapusPenemuanLainTmp(this)" data-id="${item.id}" class="btn btn-sm btn-icon btn-light-danger"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    `);
+                });
+
                 //clear select
                 $("#hama_penyakit").val('').trigger('change')
+                $("#ditemukan_lainnya").val('')
             } else {
                 showSwal('error', result.msg)
             }
@@ -646,6 +677,13 @@ function tambahHamaPenyakitEdit() {
         return;
     }
 
+    //idHamaPenyakit == -1 artinya ada penemuan lain
+    const penemuanLain = $("#ditemukan_lainnya-edit").val();
+    if (idHamaPenyakit == '-1' && !penemuanLain) {
+        showSwal('info', 'Harap masukkan penemuan yang kamu temukan');
+        return;
+    }
+
     showSwalLoader()
     $.ajax({
         url: urlInsertHamaPenyakit,
@@ -653,6 +691,7 @@ function tambahHamaPenyakitEdit() {
         dataType: 'json',
         data: {
             _token: csrf_token,
+            penemuan_lain: penemuanLain,
             hama_penyakit: idHamaPenyakit,
         },
         success: (result) => {
@@ -663,6 +702,7 @@ function tambahHamaPenyakitEdit() {
                 $("#list-hama-penyakit-edit").html('')
                 closeSwal()
                 const listHamaPenyakit = result.listHamaPenyakit;
+                const listPenemuanLain = result.listPenemuanLain;
 
                 $.each(listHamaPenyakit, (index, hamaPenyakitTmp) => {
                     $("#list-hama-penyakit-edit").append(`
@@ -676,8 +716,21 @@ function tambahHamaPenyakitEdit() {
                     `);
                 });
 
+                $.each(listPenemuanLain, (index, item) => {
+                    $("#list-hama-penyakit-edit").append(`
+                    <tr>
+                        <td class="text-center align-middle">-</td>
+                        <td class="align-middle">${item.penemuan}</td>
+                        <td class="text-center">
+                            <button type="button" onclick="hapusPenemuanLainTmp(this)" data-id="${item.id}" class="btn btn-sm btn-icon btn-light-danger"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    `);
+                });
+
                 //clear select
                 $("#hama_penyakit-edit").val('').trigger('change')
+                $("#ditemukan_lainnya-edit").val('')
             } else {
                 showSwal('error', result.msg)
             }
@@ -702,6 +755,38 @@ function hapusHamaPenyakitTmp(el) {
         data: {
             _token: csrf_token,
             id_hama_penyakit_tmp: idHamaPenyakitTmp,
+        },
+        success: (result) => {
+            csrf_token = result.csrf_token;
+            $('input[name=_token]').val(csrf_token)
+
+            if (result.status) {
+                closeSwal()
+                btn.closest('tr').remove()
+            } else {
+                showSwal('error', result.msg)
+            }
+        }
+    }).fail(() => {
+        swalFailed()
+    })
+}
+
+function hapusPenemuanLainTmp(el) {
+    const btn = $(el)
+    const idPenemuanLain = btn.data('id')
+    if (!idPenemuanLain) {
+        return;
+    }
+
+    showSwalLoader()
+    $.ajax({
+        url: urlDeletePenemuanLain,
+        type: 'post',
+        dataType: 'json',
+        data: {
+            _token: csrf_token,
+            id_penemuan_lain: idPenemuanLain,
         },
         success: (result) => {
             csrf_token = result.csrf_token;
@@ -868,6 +953,7 @@ function showLog(el) {
 
                 const log = result.log
                 const hamaPenyakit = result.hamaPenyakit
+                const listPenemuanLain = result.listPenemuanLain
                 const foto = result.foto
 
                 $("#detil-kegiatan-show").html(log.deskripsi)
@@ -886,12 +972,19 @@ function showLog(el) {
                 }
 
                 var tbody = "";
-                if (hamaPenyakit.length > 0) {
+                if (hamaPenyakit.length > 0 || listPenemuanLain.length > 0) {
                     $.each(hamaPenyakit, (index, item) => {
                         tbody += `<tr>`
                         tbody += `<td class="text-center">${item.jenis_hama_penyakit}</td>`
                         tbody += `<td>${item.ket}</td>`
                         tbody += `<td>${item.deskripsi ? item.deskripsi : ''}</td>`
+                        tbody += `</tr>`
+                    })
+                    $.each(listPenemuanLain, (index, item) => {
+                        tbody += `<tr>`
+                        tbody += `<td class="text-center">-</td>`
+                        tbody += `<td>${item.penemuan}</td>`
+                        tbody += `<td>-</td>`
                         tbody += `</tr>`
                     })
                     $('#list-hama-penyakit-show').html(tbody)
@@ -966,6 +1059,7 @@ function editLog(el) {
 
                         const log = result.log
                         const hamaPenyakit = result.hamaPenyakit
+                        const listPenemuanLain = result.listPenemuanLain
                         const foto = result.foto
 
                         $("#id_logbook").val(idLog);
@@ -1014,7 +1108,7 @@ function editLog(el) {
                         // }
 
                         var tbody = "";
-                        if (hamaPenyakit.length > 0) {
+                        if (hamaPenyakit.length > 0 || listPenemuanLain.length > 0) {
                             $.each(hamaPenyakit, (index, item) => {
                                 tbody += `
                                 <tr>
@@ -1025,7 +1119,17 @@ function editLog(el) {
                                     </td>
                                 </tr>
                                 `
-
+                            })
+                            $.each(listPenemuanLain, (index, item) => {
+                                tbody += `
+                                <tr>
+                                    <td class="text-center align-middle">-</td>
+                                    <td class="align-middle">${item.penemuan}</td>
+                                    <td class="text-center">
+                                        <button type="button" onclick="hapusPenemuanLainTmp(this)" data-id="${item.id}" class="btn btn-sm btn-icon btn-light-danger"><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                `
                             })
                             $('#list-hama-penyakit-edit').html(tbody)
                             $("#ada_hama_penyakit-edit").prop('checked', true).trigger('change')
