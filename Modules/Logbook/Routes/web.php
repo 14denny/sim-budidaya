@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('log')->name('log.')->middleware(['auth'])->group(function() {
     Route::get('/', 'LogbookController@index')->name('index');
-    Route::get('/{id}', 'LogbookController@logbook')->name('log');
     Route::post('/get-tahap', 'LogbookController@getTahap')->name('getTahap');
     Route::post('/get-kegiatan', 'LogbookController@getKegiatan')->name('getKegiatan');
     Route::post('/get-detil-kegiatan', 'LogbookController@getDetilKegiatan')->name('getDetilKegiatan');
@@ -31,4 +30,7 @@ Route::prefix('log')->name('log.')->middleware(['auth'])->group(function() {
     Route::post('/get', 'LogbookController@getLogbook')->name('getLogbook');
     Route::post('/init-edit-log', 'LogbookController@initEditLog')->name('initEditLog');
     Route::post('/delete-log', 'LogbookController@deleteLog')->name('deleteLog');
+    Route::get('/csrf', 'LogbookController@csrf')->name('csrf');
+    Route::post('/cetak', 'LogbookController@cetak')->name('cetak');
+    Route::get('/{id}', 'LogbookController@logbook')->name('log');
 });

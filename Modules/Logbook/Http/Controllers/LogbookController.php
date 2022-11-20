@@ -54,7 +54,7 @@ class LogbookController extends Controller
         $logbookModel = new LogbookModel();
         $dataView = array(
             'lokasi' => $lokasi,
-            'pesertaLokasi'=> $pesertaLokasi,
+            'pesertaLokasi' => $pesertaLokasi,
             'allFase' => $logbookModel->getAllFase(),
             'allHamaPenyakit' => $logbookModel->getAllHamaPenyakit(),
             'logbook' => $logbookModel->getListLog($id)
@@ -173,7 +173,7 @@ class LogbookController extends Controller
                 throw new \Exception("ID Lokasi tidak ditemukan");
             }
 
-            if($idHamaPenyakit == -1 && !$penemuanLain){
+            if ($idHamaPenyakit == -1 && !$penemuanLain) {
                 throw new \Exception("Harap masukkan temuan lainnya yang kamu temukan");
             }
 
@@ -183,7 +183,7 @@ class LogbookController extends Controller
             }
 
             $hamaPenyakitModel = new HamaPenyakitModel();
-            if($idHamaPenyakit != -1){
+            if ($idHamaPenyakit != -1) {
                 $hamaPenyakit = $hamaPenyakitModel->getHamaPenyakitById($idHamaPenyakit);
                 if (!$hamaPenyakit) {
                     throw new \Exception("Hama/Penyakit tidak dapat ditemukan");
@@ -517,14 +517,14 @@ class LogbookController extends Controller
     {
         try {
             $idLog = $request->post('id_logbook');
-            if(!$idLog){
+            if (!$idLog) {
                 throw new \Exception("ID Log tidak dapat ditemukan");
             }
 
             $idLokasi = session('id_lokasi');
-            
+
             $logbookModel = new LogbookModel();
-            if(!$logbookModel->checkLogbookLokasi($idLog, $idLokasi)){
+            if (!$logbookModel->checkLogbookLokasi($idLog, $idLokasi)) {
                 throw new \Exception("Log ini bukan dari lokasi budidaya kamu");
             }
 
@@ -580,7 +580,7 @@ class LogbookController extends Controller
             );
 
             $logbookModel->updateLogbook($idLog, $dataUpdate);
-            
+
             //move data
             $logbookModel->updateHamaPenyakitLog($idLog, session('id_lokasi'));
             $logbookModel->updatePenemuanLainLog($idLog, session('id_lokasi'));
@@ -652,7 +652,7 @@ class LogbookController extends Controller
             //get foto
             $foto = $logbookModel->getFotoByIdLog($id);
 
-            
+
             //get hama/penyakit
             $hamaPenyakit = $edit ? $logbookModel->getHamaPenyakitTmpByIdLokasi(session('id_lokasi')) : $logbookModel->getHamaPenyakitByIdLog($id);
             $listPenemuanLain = $edit ? $logbookModel->getPenemuanLainTmpByIdLokasi(session('id_lokasi')) : $logbookModel->getPenemuanLainByIdLog($id);
@@ -695,18 +695,19 @@ class LogbookController extends Controller
         }
     }
 
-    public function deleteLog(Request $request){
+    public function deleteLog(Request $request)
+    {
         try {
             $idLokasi = session('id_lokasi');
             $idLog = $request->post('id_log');
 
-            if(!$idLog){
+            if (!$idLog) {
                 throw new \Exception('ID Log tidak dapat ditemukan');
             }
 
             $logbookModel = new LogbookModel();
 
-            if(!$logbookModel->checkLogbookLokasi($idLog, $idLokasi)){
+            if (!$logbookModel->checkLogbookLokasi($idLog, $idLokasi)) {
                 throw new \Exception('Log kegiatan ini bukan dari lokasi budidaya kamu');
             }
 
@@ -727,5 +728,39 @@ class LogbookController extends Controller
                 'csrf_token' => csrf_token()
             ));
         }
+    }
+
+    public function csrf()
+    {
+        echo csrf_token();
+    }
+
+    public function cetak()
+    {
+        $idLokasi = session('id_lokasi');
+
+        $lokasiModel = new LokasiModel();
+        $lokasi = $lokasiModel->getLokasiById($idLokasi);
+        $pesertaLokasi = $lokasiModel->getPesertaLokasi($idLokasi);
+        $logbookModel = new LogbookModel();
+        $logbook = $logbookModel->getListLog($idLokasi);
+        $content =
+            view(
+                'logbook::pdf/logbook',
+                [
+                    'lokasi' => $lokasi,
+                    'pesertaLokasi' => $pesertaLokasi,
+                    'logbook' => $logbook,
+                    'model' => $logbookModel
+                ]
+            )
+            ->render();
+
+        $mypdf = new \Mpdf\Mpdf(['format' => 'Legal']);
+        $footer = "Dikeluarkan oleh sistem pada " . date('d-m-Y H:i:s') . " WIB";
+
+        $mypdf->SetFooter($footer);
+        $mypdf->WriteHTML($content);
+        $mypdf->Output("Log Kegiatan " . $lokasi->nama_lokasi . ".pdf", "I");
     }
 }

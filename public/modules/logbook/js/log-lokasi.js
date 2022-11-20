@@ -215,6 +215,7 @@ KTUtil.onDOMContentLoaded((function () {
         noCalendar: true,
         dateFormat: "H:i",
     });
+
 }));
 
 const divSelectTahap = $("#select-tahap");
@@ -224,6 +225,19 @@ const divSelectDetilKegiatan = $("#select-detil-kegiatan");
 const divSelectTahapEdit = $("#select-tahap-edit");
 const divSelectkegiatanEdit = $("#select-kegiatan-edit");
 const divSelectDetilKegiatanEdit = $("#select-detil-kegiatan-edit");
+
+function getCSRF(callback){
+    $.ajax({
+        url: urlCSRF,
+        success: (csrf) => {
+            csrf_token = csrf
+            $("input[name=_token]").val(csrf_token)
+            callback()
+        }
+    }).fail(()=>{
+        swalFailed()
+    })
+}
 
 function changeFase(el) {
     const select = $(el)
@@ -996,7 +1010,7 @@ function showLog(el) {
                 if (foto.length > 0) {
                     var img = ""
                     $.each(foto, (index, item) => {
-                        img += `<img src="${baseUrlFoto}/${item.filename}" class="rounded img-fluid mh-300px p-2 mw-50" style="grid-auto-flow: dense">`
+                        img += `<img src="${baseUrlFoto}/${item.filename}" class="rounded-4 img-fluid mh-300px p-2 mw-50" style="grid-auto-flow: dense">`
                     })
                     $('#foto-log-show').html(img)
                 } else {
@@ -1200,4 +1214,12 @@ function deleteLog(el) {
             })
         }
     )
+}
+
+function cetakLogbook(){
+    showSwalLoader()
+    getCSRF(() => {
+        closeSwal()
+        $("#cetak-logbook").submit()
+    })
 }

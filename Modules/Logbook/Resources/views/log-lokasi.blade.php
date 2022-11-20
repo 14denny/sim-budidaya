@@ -84,10 +84,17 @@
             <div class="card card-flush shadow-sm">
                 <div class="card-header">
                     <h5 class="card-title text-center fs-4 fw-bold">Daftar Log Kegiatan Budidaya</h5>
-                    <div class="card-toolbar">
-                        <button type="button" class="btn btn-sm btn-light-primary" onclick="openModal()">
+                    <div class="card-toolbar gx-4">
+                        <button type="button" class="btn btn-sm btn-light-primary me-4" onclick="openModal()">
                             Tambah Log
                         </button>
+                        <form target="_blank" action="{{ route('log.cetak') }}" id="cetak-logbook" method="post">
+                            @csrf
+                            <button type="button" onclick="cetakLogbook()"
+                                class="border border-danger btn btn-sm btn-light-danger"><i
+                                    class="bi bi-file-earmark-pdf"></i> Cetak
+                            </button>
+                        </form>
                     </div>
                 </div>
                 <div class="card-body d-flex flex-column pt-0">
@@ -322,8 +329,8 @@
                                         @endforeach
                                         <option value="-1">Lainnya</option>
                                     </select>
-                                    <textarea rows="4" type="text" name="ditemukan_lainnya" id="ditemukan_lainnya"
-                                        style="display: none" placeholder="Apa yang kamu temukan? (maks. 200 karakter)" class="mt-5 form-control form-control-solid"></textarea>
+                                    <textarea rows="4" type="text" name="ditemukan_lainnya" id="ditemukan_lainnya" style="display: none"
+                                        placeholder="Apa yang kamu temukan? (maks. 200 karakter)" class="mt-5 form-control form-control-solid"></textarea>
                                 </div>
                                 <div class="col-md-3">
                                     <button type="button" onclick="tambahHamaPenyakit()" class="mt-7 btn btn-info">
@@ -500,8 +507,8 @@
                                         @endforeach
                                         <option value="-1">Lainnya</option>
                                     </select>
-                                    <textarea type="text" name="ditemukan_lainnya-edit" id="ditemukan_lainnya-edit"
-                                        style="display: none" placeholder="Apa yang kamu temukan? (maks. 200 karakter)" class="form-control form-control-solid mt-5"></textarea>
+                                    <textarea type="text" name="ditemukan_lainnya-edit" id="ditemukan_lainnya-edit" style="display: none"
+                                        placeholder="Apa yang kamu temukan? (maks. 200 karakter)" class="form-control form-control-solid mt-5"></textarea>
                                 </div>
                                 <div class="col-md-3">
                                     <button type="button" onclick="tambahHamaPenyakitEdit()" class="mt-7 btn btn-info">
@@ -702,5 +709,6 @@
         const baseUrlFoto = "{{ url('storage/foto-logbook-tmp') }}"
         const initEditLog = "{{ route('log.initEditLog') }}"
         const urlDeleteLog = "{{ route('log.deleteLog') }}"
+        const urlCSRF = "{{ route('log.csrf') }}"
     </script>
 @endsection
