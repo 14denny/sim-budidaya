@@ -46,6 +46,7 @@ $("#form-add-lokasi").submit((e) => {
                             tableLokasi.getNextNumber(),
                             result.newLokasi.id,
                             result.newLokasi.nama_lokasi,
+                            result.newLokasi.periode,
                             `Propinsi ${result.newLokasi.ket_propinsi}, ${result.newLokasi.ket_kabkota}, Kecamatan ${result.newLokasi.ket_kecamatan}, Desa ${result.newLokasi.ket_desa}`,
                             `<button onclick="deleteLokasi(this)" data-id="${result.newLokasi.id}" data-nama="${result.newLokasi.nama_lokasi}" class="btn btn-sm btn-icon btn-danger">
                                 <i class="fa fa-trash"></i>

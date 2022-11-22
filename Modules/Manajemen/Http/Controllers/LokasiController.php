@@ -155,6 +155,12 @@ class LokasiController extends Controller
             $insertID = $lokasiModel->insert($newLokasi);
             if ($insertID) {
                 $newLokasi = $lokasiModel->getLokasiById($insertID);
+                if ($newLokasi->tahun_awal == $newLokasi->tahun_akhir) {
+                    $newLokasi->periode = AppHelper::get_nama_bulan($newLokasi->bulan_awal) . ' - ' . AppHelper::get_nama_bulan($newLokasi->bulan_akhir) . ' ' . $newLokasi->tahun_awal;
+                } else {
+                    $newLokasi->periode =  AppHelper::get_nama_bulan($newLokasi->bulan_awal) . ' ' . $newLokasi->tahun_awal . ' - ' . AppHelper::get_nama_bulan($newLokasi->bulan_akhir) . ' ' . $newLokasi->tahun_akhir;
+                }
+
                 echo json_encode(array(
                     'status' => true,
                     'msg' => "Berhasil menambahkan lokasi baru",
