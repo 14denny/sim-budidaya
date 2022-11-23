@@ -107,6 +107,9 @@
                         <p>{{ $i->penemuan }}</p>
                     @endforeach
                     <br>
+                    <p style="font-weight: bold">Penginput:</p>
+                    <p>{{ $item->peserta_insert }}</p>
+                    <br>
                     <p><b>Lampiran</b></p>
                     <br>
                     @foreach ($foto as $i)

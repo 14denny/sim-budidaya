@@ -116,7 +116,7 @@ class LogbookModel extends Model
             ->where('id', $idHamaPenyakitTmp)
             ->delete();
     }
-    
+
     function deletePenemuanLainTmp($idLokasi, $idPenemuanLain)
     {
         return DB::table('penemuan_lain_log_tmp')
@@ -398,7 +398,7 @@ class LogbookModel extends Model
             ->limit(4) //hanya 4 foto
             ->get();
 
-        if(sizeof($listFoto) > 0){ //hanya jika ada upload foto baru saja
+        if (sizeof($listFoto) > 0) { //hanya jika ada upload foto baru saja
             $dataInsert = [];
             foreach ($listFoto as $item) {
                 array_push($dataInsert, [
@@ -429,7 +429,8 @@ class LogbookModel extends Model
                 DB::raw('(SELECT ket from fase where fase.id=logbook.fase) as ket_fase'),
                 DB::raw('(SELECT ket from tahap where tahap.id=logbook.tahap) as ket_tahap'),
                 DB::raw('(SELECT ket from kegiatan where kegiatan.id=logbook.kegiatan) as ket_kegiatan'),
-                DB::raw('(SELECT ket from detil_kegiatan where detil_kegiatan.id=logbook.detil_kegiatan) as ket_detil_kegiatan')
+                DB::raw('(SELECT ket from detil_kegiatan where detil_kegiatan.id=logbook.detil_kegiatan) as ket_detil_kegiatan'),
+                DB::raw('(SELECT nama from peserta where npm=user_insert limit 1) as peserta_insert')
             ])
             ->where('id_lokasi', $idLokasi)
             ->orderBy('tgl_log')
@@ -451,7 +452,8 @@ class LogbookModel extends Model
                 DB::raw('(SELECT ket from fase where fase.id=logbook.fase) as ket_fase'),
                 DB::raw('(SELECT ket from tahap where tahap.id=logbook.tahap) as ket_tahap'),
                 DB::raw('(SELECT ket from kegiatan where kegiatan.id=logbook.kegiatan) as ket_kegiatan'),
-                DB::raw('(SELECT ket from detil_kegiatan where detil_kegiatan.id=logbook.detil_kegiatan) as ket_detil_kegiatan')
+                DB::raw('(SELECT ket from detil_kegiatan where detil_kegiatan.id=logbook.detil_kegiatan) as ket_detil_kegiatan'),
+                DB::raw('(SELECT nama from peserta where npm=user_insert limit 1) as peserta_insert')
             ])
             ->where('id', $id)
             ->first();
@@ -461,64 +463,74 @@ class LogbookModel extends Model
         return $log;
     }
 
-    function getFotoByIdLog($idLog){
+    function getFotoByIdLog($idLog)
+    {
         return DB::table('foto_log')->where('id_logbook', $idLog)->get();
     }
 
-    function getHamaPenyakitByIdLog($idLog){
+    function getHamaPenyakitByIdLog($idLog)
+    {
         return DB::table('hama_penyakit_log')
-        ->select([
-            'hama_penyakit.*',
-            'hama_penyakit_log.id as id_hama_penyakit_log',
-            DB::raw("(SELECT ket from jenis_hama_penyakit j where j.id=hama_penyakit.jenis) as jenis_hama_penyakit")
-        ])
-        ->join('hama_penyakit', 'hama_penyakit.id','=', 'hama_penyakit_log.id_hama_penyakit')
-        ->where('hama_penyakit_log.id_logbook', $idLog)->get();
+            ->select([
+                'hama_penyakit.*',
+                'hama_penyakit_log.id as id_hama_penyakit_log',
+                DB::raw("(SELECT ket from jenis_hama_penyakit j where j.id=hama_penyakit.jenis) as jenis_hama_penyakit")
+            ])
+            ->join('hama_penyakit', 'hama_penyakit.id', '=', 'hama_penyakit_log.id_hama_penyakit')
+            ->where('hama_penyakit_log.id_logbook', $idLog)->get();
     }
 
-    function getPenemuanLainByIdLog($idLog){
+    function getPenemuanLainByIdLog($idLog)
+    {
         return DB::table('penemuan_lain_log')
             ->where('id_logbook', $idLog)
             ->get();
     }
 
-    function getHamaPenyakitTmpByIdLokasi($idLokasi){
+    function getHamaPenyakitTmpByIdLokasi($idLokasi)
+    {
         return DB::table('hama_penyakit_log_tmp')
-        ->select([
-            'hama_penyakit.*',
-            'hama_penyakit_log_tmp.id as id_hama_penyakit_tmp',
-            DB::raw("(SELECT ket from jenis_hama_penyakit j where j.id=hama_penyakit.jenis) as jenis_hama_penyakit")
-        ])
-        ->join('hama_penyakit', 'hama_penyakit.id','=', 'hama_penyakit_log_tmp.id_hama_penyakit')
-        ->where('hama_penyakit_log_tmp.id_lokasi', $idLokasi)
-        ->where('hama_penyakit_log_tmp.npm_insert', session('username'))
-        ->get();
+            ->select([
+                'hama_penyakit.*',
+                'hama_penyakit_log_tmp.id as id_hama_penyakit_tmp',
+                DB::raw("(SELECT ket from jenis_hama_penyakit j where j.id=hama_penyakit.jenis) as jenis_hama_penyakit")
+            ])
+            ->join('hama_penyakit', 'hama_penyakit.id', '=', 'hama_penyakit_log_tmp.id_hama_penyakit')
+            ->where('hama_penyakit_log_tmp.id_lokasi', $idLokasi)
+            ->where('hama_penyakit_log_tmp.npm_insert', session('username'))
+            ->get();
     }
 
-    function getPenemuanLainTmpByIdLokasi($idLokasi){
+    function getPenemuanLainTmpByIdLokasi($idLokasi)
+    {
         return DB::table('penemuan_lain_log_tmp')
             ->where('id_lokasi', $idLokasi)
             ->where('npm_insert', session('username'))
             ->get();
     }
 
-    function checkLogbookLokasi($idLog, $idLokasi){
+    function checkLogbookLokasi($idLog, $idLokasi)
+    {
         return DB::table('logbook')->where('id_lokasi', $idLokasi)->where('id', $idLog)->first();
     }
 
-    function deleteLogbook($idLog){
+    function deleteLogbook($idLog)
+    {
         return DB::table('logbook')->where('id', $idLog)->delete();
     }
 
-    function deleteHamaPenyakit($idLog){
+    function deleteHamaPenyakit($idLog)
+    {
         return DB::table('hama_penyakit_log')->where('id_logbook', $idLog)->delete();
     }
 
-    function deletePenemuanLain($idLog){
+    function deletePenemuanLain($idLog)
+    {
         return DB::table('penemuan_lain_log')->where('id_logbook', $idLog)->delete();
     }
 
-    function deleteFoto($idLog){
+    function deleteFoto($idLog)
+    {
         $listFoto = DB::table('foto_log')->where('id_logbook', $idLog)->get();
         foreach ($listFoto as $foto) {
             $pathFoto = env('DIR_FOTO_LOG_TMP', '');

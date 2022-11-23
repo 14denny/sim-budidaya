@@ -185,7 +185,8 @@
                                 class="table table-hover border table-row-bordered table-rounded gy-7 gx-5 mx-5 my-7">
                                 <thead>
                                     <tr>
-                                        <th class="text-center">No</th>
+                                        <th class="text-center fit-td px-7">No</th>
+                                        <th class="text-center">Penginput</th>
                                         <th class="text-center">Waktu</th>
                                         <th class="text-center">Fase</th>
                                         <th class="text-center">Detil Kegiatan</th>
@@ -196,9 +197,11 @@
                                     @foreach ($logbook as $item)
                                         <tr>
                                             <td data-id="{{ $item->id }}">{{ $loop->index + 1 }}</td>
+                                            <td>{{ $item->peserta_insert }}</td>
                                             <td>
                                                 {{ $item->tgl_log }}<br>
-                                                {{ $item->time_start }} - {{ $item->time_end }}
+                                                {{ substr($item->time_start, 0, 5) }} -
+                                                {{ substr($item->time_end, 0, 5) }}
                                             </td>
                                             <td>
                                                 {{ $item->ket_fase }}<br>{{ $item->ket_tahap }}<br>{{ $item->ket_kegiatan }}

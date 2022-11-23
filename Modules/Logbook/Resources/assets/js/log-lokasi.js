@@ -184,11 +184,15 @@ KTUtil.onDOMContentLoaded((function () {
             },
             {
                 className: 'text-center',
-                target: [0, 1, 4]
+                target: [0, 2, 5]
+            },
+            {
+                className: 'fit-td px-5 text-center',
+                target: [0]
             },
             {
                 className: 'cut-text',
-                target: [3]
+                target: [4]
             },
             // {
             //     visible: false,
@@ -226,7 +230,7 @@ const divSelectTahapEdit = $("#select-tahap-edit");
 const divSelectkegiatanEdit = $("#select-kegiatan-edit");
 const divSelectDetilKegiatanEdit = $("#select-detil-kegiatan-edit");
 
-function getCSRF(callback){
+function getCSRF(callback) {
     $.ajax({
         url: urlCSRF,
         success: (csrf) => {
@@ -234,7 +238,7 @@ function getCSRF(callback){
             $("input[name=_token]").val(csrf_token)
             callback()
         }
-    }).fail(()=>{
+    }).fail(() => {
         swalFailed()
     })
 }
@@ -912,7 +916,8 @@ function reloadTable() {
                 $.each(datas, (index, item) => {
                     var tr = $('<tr>')
                         .append(`<td data-id="${item.id}">${index + 1}</td>`)
-                        .append(`<td>${item.tgl_log}<br>${item.time_start} - ${item.time_end}</td>`)
+                        .append(`<td>${item.peserta_insert}</td>`)
+                        .append(`<td>${item.tgl_log}<br>${item.time_start.substr(0, 5)} - ${item.time_end.substr(0, 5)}</td>`)
                         .append(`<td>${item.ket_fase}<br>${item.ket_tahap}<br>${item.ket_kegiatan}
                         ${item.detil_kegiatan ? '<br>' + item.ket_detil_kegiatan : ''}</td>`)
                         .append(`<td>${item.deskripsi}</td>`)
@@ -1216,7 +1221,7 @@ function deleteLog(el) {
     )
 }
 
-function cetakLogbook(){
+function cetakLogbook() {
     showSwalLoader()
     getCSRF(() => {
         closeSwal()
