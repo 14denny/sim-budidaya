@@ -32,5 +32,6 @@ Route::prefix('log')->name('log.')->middleware(['auth'])->group(function() {
     Route::post('/delete-log', 'LogbookController@deleteLog')->name('deleteLog');
     Route::get('/csrf', 'LogbookController@csrf')->name('csrf');
     Route::post('/cetak', 'LogbookController@cetak')->name('cetak');
+    Route::post('/cetak-lokasi', 'LogbookController@cetakLokasi')->name('cetakLokasi');
     Route::get('/{id}', 'LogbookController@logbook')->name('log');
 });

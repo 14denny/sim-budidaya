@@ -95,6 +95,13 @@
                                     class="bi bi-file-earmark-pdf"></i> Cetak
                             </button>
                         </form>
+                        <form target="_blank" action="{{ route('log.cetakLokasi') }}" id="cetak-logbook-lokasi" method="post">
+                            @csrf
+                            <button type="button" onclick="cetakLogbookLokasi()"
+                                class="border border-danger btn btn-sm btn-light-danger ms-3"><i
+                                    class="bi bi-file-earmark-pdf"></i> Cetak Log Lokasi
+                            </button>
+                        </form>
                     </div>
                 </div>
                 <div class="card-body d-flex flex-column pt-0">

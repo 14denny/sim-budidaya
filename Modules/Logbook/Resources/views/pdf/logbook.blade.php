@@ -29,7 +29,7 @@
         padding: .5rem !important;
     }
 </style>
-<h3 class="text-center">LOG KEGIATAN BUDIDAYA<br>{{ $lokasi->nama_lokasi }}</h3>
+<h3 class="text-center" style="page-break-before: always">LOG KEGIATAN BUDIDAYA<br>{{ $lokasi->nama_lokasi }}</h3>
 
 <table>
     <tr>

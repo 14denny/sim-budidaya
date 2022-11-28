@@ -1228,3 +1228,11 @@ function cetakLogbook() {
         $("#cetak-logbook").submit()
     })
 }
+
+function cetakLogbookLokasi() {
+    showSwalLoader()
+    getCSRF(() => {
+        closeSwal()
+        $("#cetak-logbook-lokasi").submit()
+    })
+}

@@ -763,4 +763,42 @@ class LogbookController extends Controller
         $mypdf->WriteHTML($content);
         $mypdf->Output("Log Kegiatan " . $lokasi->nama_lokasi . ".pdf", "I");
     }
+
+    public function cetakLokasi()
+    {
+        $idLokasi = session('id_lokasi');
+        if(!in_array($idLokasi, [7,8,9])){
+            echo "Lokasi tidak ditemukan";
+            exit;
+        }
+
+        $listLokasi = [7,8,9];
+        $mypdf = new \Mpdf\Mpdf(['format' => 'Legal']);
+
+        foreach($listLokasi as $idLokasi){
+            $lokasiModel = new LokasiModel();
+            $lokasi = $lokasiModel->getLokasiById($idLokasi);
+            $pesertaLokasi = $lokasiModel->getPesertaLokasi($idLokasi);
+            $logbookModel = new LogbookModel();
+            $logbook = $logbookModel->getListLog($idLokasi);
+            $content =
+                view(
+                    'logbook::pdf/logbook',
+                    [
+                        'lokasi' => $lokasi,
+                        'pesertaLokasi' => $pesertaLokasi,
+                        'logbook' => $logbook,
+                        'model' => $logbookModel
+                    ]
+                )
+                ->render();
+            $mypdf->WriteHTML($content);
+            $mypdf->AddPage();
+        }
+
+        $footer = "Dikeluarkan oleh sistem pada " . date('d-m-Y H:i:s') . " WIB";
+
+        $mypdf->SetFooter($footer);
+        $mypdf->Output("Log Kegiatan " . $lokasi->nama_lokasi . ".pdf", "I");
+    }
 }
